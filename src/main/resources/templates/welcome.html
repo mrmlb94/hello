@@ -2,6 +2,37 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Welcome</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column; /* Arrange items vertically */
+            align-items: center;    /* Center horizontally */
+            justify-content: center;   /* Center vertically */
+            height: 100vh;             /* Occupy full screen height */
+            margin: 0;
+            background-color: #f0f8ff;  /* Light blue background */
+        }
+
+        h1 {
+            color: #333;            /* Darker text color */
+            font-size: 3em;         /* Larger heading */
+            margin-bottom: 20px;
+        }
+
+        a {
+            background-color: #4CAF50;  /* Green button  */
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;      /* Remove underline */
+            border-radius: 5px;
+            font-size: 1.1em;          /* Slightly larger link */
+        }
+
+        a:hover {
+            background-color: #45a049;  /* Darker green on hover */
+        }
+    </style>
 </head>
 <body>
 <h1 th:text="'Hello, ' + ${name} + '!'"></h1>
