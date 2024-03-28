@@ -12,13 +12,16 @@ public class User {
 
     private String name;
 
-    public User(Long id, String name) {
+    private String password;
+
+    public User(Long id, String name, String password) {
         this.id = id;
         this.name = name;
+        this.password = password;
     }
 
     public User() {
-
+        // Default constructor
     }
 
     @Override
@@ -26,6 +29,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
+                ", password='" + password + '\'' + // Include password in toString for debugging (be cautious with logging sensitive data)
                 '}';
     }
 
@@ -45,4 +49,11 @@ public class User {
         this.name = name;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

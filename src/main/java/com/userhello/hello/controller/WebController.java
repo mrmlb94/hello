@@ -1,5 +1,4 @@
 package com.userhello.hello.controller;
-
 import com.userhello.hello.repository.UserRepository;
 import com.userhello.hello.user.User;
 import org.springframework.stereotype.Controller;
@@ -8,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,23 +26,44 @@ public class WebController {
     }
 
     @PostMapping("/login")
-    public String login(@RequestParam String name, Model model) {
-        User user = new User();
-        user.setName(name);
-        userRepository.save(user);
-        model.addAttribute("name", name);
-        return "welcome";
+    public String login(@RequestParam String name, @RequestParam String password, Model model, HttpSession session) {
+        List<User> users = userRepository.findByName(name);
+
+        for (User user : users) {
+            if (user.getPassword().equals(password)) {
+                session.setAttribute("authenticated", true); // Set session attribute on successful login
+                model.addAttribute("name", user.getName());
+                return "welcome";
+            }
+        }
+
+        return "accessDenied";
     }
 
     @GetMapping("/users")
-    public String listUsers(Model model) {
+    public String listUsers(Model model, HttpSession session) {
+        if (session.getAttribute("authenticated") == null) {
+            return "redirect:/"; // Redirect to log in if not authenticated
+        }
         List<User> users = (List<User>) userRepository.findAll();
         model.addAttribute("users", users);
         return "users";
     }
+
+    // Ensure this endpoint is also protected
+    @GetMapping("/welcome")
+    public String welcome(HttpSession session) {
+        if (session.getAttribute("authenticated") == null) {
+            return "redirect:/"; // Redirect to log in if not authenticated
+        }
+        return "welcome";
+    }
+
     @PostMapping("/editUser")
-    public String editUser(User user) {
-        // Fetch the existing user from the database
+    public String editUser(User user, HttpSession session) {
+        if (session.getAttribute("authenticated") == null) {
+            return "redirect:/"; // Redirect to log in if not authenticated
+        }
         Optional<User> existingUser = userRepository.findById(user.getId());
         if (existingUser.isPresent()) {
             User updatedUser = existingUser.get();
@@ -52,11 +72,27 @@ public class WebController {
         }
         return "redirect:/users";
     }
+
     @PostMapping("/deleteUser/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
-        userRepository.deleteById(id);  // Directly use userRepository to delete by id
-        return "redirect:/users";  // Redirect back to the users page
+    public String deleteUser(@PathVariable("id") Long id, HttpSession session) {
+        if (session.getAttribute("authenticated") == null) {
+            return "redirect:/"; // Redirect to log in if not authenticated
+        }
+        userRepository.deleteById(id);
+        return "redirect:/users";
     }
 
-
+    @PostMapping("/changePassword")
+    public String changeUserPassword(@RequestParam Long id, @RequestParam String newPassword, HttpSession session) {
+        if (session.getAttribute("authenticated") == null) {
+            return "redirect:/"; // Redirect to log in if not authenticated
+        }
+        Optional<User> userOptional = userRepository.findById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setPassword(newPassword); // Ideally, you should hash the password
+            userRepository.save(user);
+        }
+        return "redirect:/users";
+    }
 }
