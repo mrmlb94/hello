@@ -6,36 +6,63 @@
         body {
             font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column; /* Arrange items vertically */
-            align-items: center;    /* Center horizontally */
-            justify-content: center;   /* Center vertically */
-            height: 100vh;             /* Occupy full screen height */
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
             margin: 0;
-            background-color: #f0f8ff;  /* Light blue background */
+            background-color: #f0f8ff;
         }
 
         h1 {
-            color: #333;            /* Darker text color */
-            font-size: 3em;         /* Larger heading */
+            color: #333;
+            font-size: 3em;
             margin-bottom: 20px;
         }
 
-        a {
-            background-color: #4CAF50;  /* Green button  */
+        a, button {
+            background-color: #4CAF50;
             color: white;
             padding: 15px 30px;
-            text-decoration: none;      /* Remove underline */
+            text-decoration: none;
             border-radius: 5px;
-            font-size: 1.1em;          /* Slightly larger link */
+            font-size: 1.1em;
         }
 
-        a:hover {
-            background-color: #45a049;  /* Darker green on hover */
+        a:hover, button:hover {
+            background-color: #45a049;
+        }
+
+        .update-form {
+            margin-top: 20px;
+        }
+
+        input[type="text"], input[type="password"] {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        label {
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
 <h1 th:text="'Hello, ' + ${name} + '!'"></h1>
 <a href="/users">See the other users</a>
+<div class="update-form">
+    <h2>Update Your Credentials</h2>
+    <form action="/updateCredentials" method="post">
+        <label for="newName">New Username:</label>
+        <input type="text" id="newName" name="newName" required>
+
+        <label for="newPassword">New Password:</label>
+        <input type="password" id="newPassword" name="newPassword" required minlength="8">
+
+        <button type="submit">Update</button>
+    </form>
+</div>
 </body>
 </html>

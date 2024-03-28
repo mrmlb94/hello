@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Error</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+
+        h1 {
+            color: #d9534f; /* Bootstrap 'btn-danger' color */
+        }
+
+        a {
+            margin-top: 20px;
+            display: inline-block;
+            background-color: #007bff; /* Bootstrap 'btn-primary' color */
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+<h1>Error: Unauthorized Action</h1>
+<p>You are not able to change these credentials. You can only update your own.</p>
+<p>You are logged in as: <strong th:text="${username}"></strong></p>
+<a href="/users">Return to User List</a>
+</body>
+</html>
