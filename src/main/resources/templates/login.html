@@ -53,14 +53,13 @@
             transition: background-color 0.3s ease;
             text-decoration: none;
             display: inline-block;
-            margin: 10px 0; /* Added margin for spacing */
+            margin: 10px 0;
         }
 
         button[type="submit"]:hover, a.button-link:hover {
             background-color: #45a049;
         }
 
-        /* Additional styles for signup link */
         .signup-link {
             margin-top: 20px;
             display: block;
@@ -71,15 +70,14 @@
 <div class="login-container">
     <h2>Welcome Back!</h2>
     <form action="/login" method="post">
-        <label for="name">Name:</label>
-        <input type="text" id="name" name="name">
+        <label for="uname">Username:</label>
+        <input type="text" id="uname" name="uname" placeholder="Enter your username">
 
         <label for="password">Password:</label>
-        <input type="password" id="password" name="password">
+        <input type="password" id="password" name="password" placeholder="Enter your password">
 
         <button type="submit">Login</button>
     </form>
-    <!-- Sign up link -->
     <a href="/signup" class="button-link signup-link">Sign Up</a>
 </div>
 </body>

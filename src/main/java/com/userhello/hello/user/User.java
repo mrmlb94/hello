@@ -17,6 +17,33 @@ public class User {
 
     private String name;
 
+    public User() {
+
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", uname='" + uname + '\'' +
+                ", password='" + password + '\'' +
+                ", familyName='" + familyName + '\'' +
+                ", birthdate=" + birthdate +
+                ", birthPlace='" + birthPlace + '\'' +
+                ", currentCountry='" + currentCountry + '\'' +
+                ", currentCity='" + currentCity + '\'' +
+                ", schoolName='" + schoolName + '\'' +
+                ", gpa=" + gpa +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                '}';
+    }
+
+    @Column(unique = true)
+    private String uname;
+
     private String password;
 
     private String familyName;
@@ -34,36 +61,37 @@ public class User {
     private String schoolName;
 
     @NotNull
-    @DecimalMin("0.0") // Adjust based on your requirements
+    @DecimalMin("0.0")
     private Float gpa;
+
     private String phone;
 
     private String email;
 
-    private String role; // "ADMIN" or "USER"
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", familyName='" + familyName + '\'' +
-                ", birthdate=" + birthdate +
-                ", birthPlace='" + birthPlace + '\'' +
-                ", currentCountry='" + currentCountry + '\'' +
-                ", currentCity='" + currentCity + '\'' +
-                ", schoolName='" + schoolName + '\'' +
-                ", gpa=" + gpa +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                ", role='" + role + '\'' +
-                '}';
+    public User(String uname) {
+
+        this.uname = uname;
     }
 
-    public User(Long id, String name, String password, String familyName, Date birthdate, String birthPlace, String currentCountry, String currentCity, String schoolName, Float gpa, String phone, String email, String role) {
+    public String getUname() {
+        return uname;
+    }
+
+    public void setUname(String uname) {
+        this.uname = uname;
+    }
+
+    public enum Role {
+        USER, ADMIN
+    }
+
+    public User(Long id, String name, String uname, String password, String familyName, Date birthdate, String birthPlace, String currentCountry, String currentCity, String schoolName, Float gpa, String phone, String email, Role role) {
         this.id = id;
         this.name = name;
+        this.uname = uname;
         this.password = password;
         this.familyName = familyName;
         this.birthdate = birthdate;
@@ -75,32 +103,6 @@ public class User {
         this.phone = phone;
         this.email = email;
         this.role = role;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
-    public User(Long id, String name, String password, String familyName, Date birthdate, String birthPlace, String currentCountry, String currentCity, String schoolName, Float gpa, String phone, String email) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.familyName = familyName;
-        this.birthdate = birthdate;
-        this.birthPlace = birthPlace;
-        this.currentCountry = currentCountry;
-        this.currentCity = currentCity;
-        this.schoolName = schoolName;
-        this.gpa = gpa;
-        this.phone = phone;
-        this.email = email;
-    }
-
-    public User() {
-
     }
 
     public Long getId() {
@@ -199,5 +201,12 @@ public class User {
         this.email = email;
     }
 
-    // Constructors, getters, and setters
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
 }
