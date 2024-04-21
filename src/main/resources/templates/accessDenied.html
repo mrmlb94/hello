@@ -1,68 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Access Denied</title>
     <style>
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .container {
+            font-family: Arial, sans-serif;
             text-align: center;
-        }
-
-        .restricted-area {
-            background-color: white;
-            padding: 40px;
-            max-width: 500px;
-            margin: 40px auto;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-        }
-
-        .lock-icon {
-            width: 80px;
-            margin-bottom: 20px;
+            padding: 50px;
         }
 
         h1 {
-            color: #dc3545; /* Error Red */
-            margin-bottom: 15px;
+            color: #d9534f;
         }
 
-        p {
-            margin-bottom: 30px;
-        }
-
-        .button {
+        a {
+            margin-top: 20px;
+            display: inline-block;
             background-color: #007bff;
             color: white;
-            padding: 12px 25px;
+            padding: 10px 20px;
             text-decoration: none;
-            border: none;
             border-radius: 5px;
-            cursor: pointer;
         }
 
-        .button:hover {
+        a:hover {
             background-color: #0056b3;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="restricted-area">
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
-        <h1>Access Denied</h1>
-        <p>You don't have permission to access this page!</p>
-        <a href="/" class="button">Return Home</a>
-    </div>
-</div>
+<h1>Access is Not Restricted</h1>
+<p>Everyone has access here, navigate freely.</p>
+<p>You might be not registered here!</p>
+
+<a href="/users">Return to User List</a>
 </body>
 </html>

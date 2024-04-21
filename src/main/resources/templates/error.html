@@ -10,13 +10,13 @@
         }
 
         h1 {
-            color: #d9534f; /* Bootstrap 'btn-danger' color */
+            color: #d9534f;
         }
 
         a {
             margin-top: 20px;
             display: inline-block;
-            background-color: #007bff; /* Bootstrap 'btn-primary' color */
+            background-color: #007bff;
             color: white;
             padding: 10px 20px;
             text-decoration: none;
@@ -29,9 +29,7 @@
     </style>
 </head>
 <body>
-<h1>Error: Unauthorized Action</h1>
-<p>You are not able to change these credentials. You can only update your own.</p>
-<p>You are logged in as: <strong th:text="${username}"></strong></p>
-<a href="/users">Return to User List</a>
+<h1>Error: Something Went Wrong</h1>
+<a href="/">Home</a>
 </body>
 </html>

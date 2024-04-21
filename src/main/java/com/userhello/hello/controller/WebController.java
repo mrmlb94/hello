@@ -1,29 +1,24 @@
 package com.userhello.hello.controller;
 
 import com.userhello.hello.Service.UserService;
+import com.userhello.hello.model.User;
 import com.userhello.hello.repository.UserRepository;
-import com.userhello.hello.user.User;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import jakarta.servlet.http.HttpSession;
 import java.util.List;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.Optional;
 
 @Controller
 public class WebController {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
-    public WebController(UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public WebController(UserService userService) {
         this.userService = userService;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
-
 
     @GetMapping("/")
     public String showLogin(Model model) {
@@ -38,122 +33,107 @@ public class WebController {
     }
 
     @PostMapping("/signup")
-    public String signUp(User user, HttpSession session, Model model) {
-        User savedUser = userService.signUp(user);
-        session.setAttribute("authenticated", true);
-        session.setAttribute("userId", savedUser.getId());
-        model.addAttribute("name", savedUser.getName());
+    public String signUp(User user, Model model) {
+        try {
+            User savedUser = userService.signUp(user);
+            model.addAttribute("name", savedUser.getName());
+            return "welcome";
+        } catch (RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
+            return "signup"; // Redirect back to signup page with error message
+        }
+    }
+
+
+
+    @PostMapping("/login")
+    public String login(@RequestParam String uname, Model model, HttpSession session) {
+        Optional<User> userOptional = userService.findByUname(uname);
+        if (!userOptional.isPresent()) {
+            model.addAttribute("error", "Username not found. Please sign up.");
+            return "login"; // Stay on login page and show error
+        }
+        User user = userOptional.get();
+        session.setAttribute("userId", user.getId()); // Storing user ID in session for tracking
+        model.addAttribute("name", user.getName());
         return "welcome";
     }
 
-    @PostMapping("/login")
-    public String login(@RequestParam String uname, @RequestParam String password, HttpSession session, Model model) {
-        List<User> users = userService.findByName(uname);
-        if (users.isEmpty()) {
-            return "redirect:/signup";
+    @GetMapping("/welcome")
+    public String welcomePage(Model model, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";  // Redirect to login if no user is logged in
         }
-        for (User user : users) {
-            if (userService.checkPassword(password, user.getPassword())) {
-                session.setAttribute("authenticated", true);
-                session.setAttribute("userId", user.getId());
-                session.setAttribute("role", user.getRole());
-                model.addAttribute("name", user.getName());
-                return "welcome";
-            }
+        Optional<User> user = userService.findById(userId);
+        if (!user.isPresent()) {
+            return "redirect:/login";  // Redirect to login if user is not found
         }
-        return "accessDenied";
+        model.addAttribute("name", user.get().getName());
+        return "welcome";  // Ensure that a 'welcome.html' view exists
     }
+
+
+
     @GetMapping("/login")
     public String showLoginPage() {
-        return "login"; // Assuming 'login' is the name of your login template
+        return "login";
     }
 
-
     @GetMapping("/users")
-    public String listUsers(Model model, HttpSession session) {
-        if (session.getAttribute("authenticated") == null) {
-            return "redirect:/login";
+    public String listUsers(@RequestParam(name = "sort", required = false) String sort, Model model) {
+        List<User> users;
+        if ("name".equals(sort)) {
+            users = userService.findAllUsersSortedByName();
+        } else {
+            users = userService.findAllUsers();
         }
-        List<User> users = userService.findAllUsers();
         model.addAttribute("users", users);
         return "users";
     }
 
-    @PostMapping("/updateCredentials")
-    public String updateCredentials(@RequestParam String newName,
-                                    @RequestParam String newPassword,
-                                    HttpSession session, Model model) {
-        if (session.getAttribute("authenticated") == null) {
-            return "redirect:/login";
-        }
-        Long userId = (Long) session.getAttribute("userId");
-        userService.updateCredentials(userId, newName, newPassword);
-        return "redirect:/welcome";
-    }
-
 
     @GetMapping("/editUser/{id}")
-    public String editUserForm(@PathVariable Long id, Model model, HttpSession session) {
-        if (!userService.canEditUser(id, session)) {
-            model.addAttribute("error", "You are not able to change these credentials. You can only update your own.");
-            model.addAttribute("username", session.getAttribute("username"));
-            return "error";
-        }
+    public String editUserForm(@PathVariable Long id, Model model) {
         User user = userService.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
         model.addAttribute("user", user);
         return "user-edit-form";
     }
 
-
-
     @PostMapping("/editUser/{id}")
-    public String updateUser(@PathVariable Long id, @ModelAttribute User updatedUser, BindingResult result, RedirectAttributes redirectAttributes) {
-        if (result.hasErrors()) {
-            return "user-edit-form";
-        }
-
-        User existingUser = userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid user Id:" + id));
-
-        // Update only the fields that have been changed in the form
-        existingUser.setName(updatedUser.getName());
-        existingUser.setFamilyName(updatedUser.getFamilyName());
-        existingUser.setEmail(updatedUser.getEmail());
-        if (updatedUser.getPassword() != null && !updatedUser.getPassword().trim().isEmpty()) {
-            // Only encode and set new password if it's not blank
-            String encodedPassword = passwordEncoder.encode(updatedUser.getPassword());
-            existingUser.setPassword(encodedPassword);
-        }
-        existingUser.setBirthdate(updatedUser.getBirthdate());
-        existingUser.setBirthPlace(updatedUser.getBirthPlace());
-        existingUser.setCurrentCountry(updatedUser.getCurrentCountry());
-        existingUser.setCurrentCity(updatedUser.getCurrentCity());
-        existingUser.setSchoolName(updatedUser.getSchoolName());
-        existingUser.setGpa(updatedUser.getGpa());
-        existingUser.setPhone(updatedUser.getPhone());
-
-        userRepository.save(existingUser);
+    public String updateUser(@PathVariable Long id, @ModelAttribute User updatedUser, Model model) {
+        User existingUser = userService.updateUser(updatedUser); // Assumes updateUser handles finding and saving
         return "redirect:/users";
     }
 
     @PostMapping("/deleteUser/{id}")
-    public String deleteUser(@PathVariable("id") Long id, HttpSession session, Model model) {
-        if (!userService.canDeleteUser(id, session)) {
-            model.addAttribute("error", "You can only delete your own account unless you're an admin.");
-            return "redirect:/error";
-        }
+    public String deleteUser(@PathVariable("id") Long id) {
         userService.deleteUser(id);
         return "redirect:/users";
     }
 
-    @PostMapping("/changePassword")
-    public String changeUserPassword(@RequestParam Long id,
-                                     @RequestParam String newPassword,
-                                     HttpSession session, Model model) {
-        if (!userService.isUserAuthenticated(id, session)) {
-            model.addAttribute("username", session.getAttribute("username"));
-            return "error";
-        }
-        userService.changePassword(id, newPassword);
-        return "redirect:/users";
+    @GetMapping("/quiz")
+    public String quizPage() {
+        return "quiz";
     }
+
+    @PostMapping("/submitQuiz")
+    public ResponseEntity<String> submitQuiz(@RequestParam("score") int score) {
+        // This should be handled correctly by your quiz service
+        return ResponseEntity.ok("Score submitted successfully. Your score: " + score);
+    }
+
+    @Autowired
+    private UserRepository userRepository;
+
+    public void signUp(User user) {
+        Optional<User> existingUser = userRepository.findByUname(user.getUname());
+        if (existingUser.isPresent()) {
+            throw new RuntimeException("Username already exists");
+        }
+        userRepository.save(user);
+    }
+
+
+
 }

@@ -5,64 +5,33 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f8ff;
+            text-align: center;
+            padding: 50px;
         }
 
         h1 {
             color: #333;
-            font-size: 3em;
-            margin-bottom: 20px;
+            font-size: 2em;
         }
 
-        a, button {
+        a {
+            margin-top: 20px;
+            display: inline-block;
             background-color: #4CAF50;
             color: white;
-            padding: 15px 30px;
+            padding: 10px 20px;
             text-decoration: none;
             border-radius: 5px;
-            font-size: 1.1em;
         }
 
-        a:hover, button:hover {
+        a:hover {
             background-color: #45a049;
-        }
-
-        .update-form {
-            margin-top: 20px;
-        }
-
-        input[type="text"], input[type="password"] {
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #ddd;
-        }
-
-        label {
-            margin-top: 10px;
         }
     </style>
 </head>
 <body>
-<h1 th:text="'Hello, ' + ${name} + '!'"></h1>
-<a href="/users">See the other users</a>
-<div class="update-form">
-    <h2>Update Your Credentials</h2>
-    <form action="/updateCredentials" method="post">
-        <label for="newName">New Username:</label>
-        <input type="text" id="newName" name="newName" required>
-
-        <label for="newPassword">New Password:</label>
-        <input type="password" id="newPassword" name="newPassword" required minlength="8">
-
-        <button type="submit">Update</button>
-    </form>
-</div>
+<h1>Welcome, <span th:text="${name}">User</span>!</h1>
+<a href="/users">View Users</a>
+<a href="/quiz">Go to Quiz</a>
 </body>
 </html>

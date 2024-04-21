@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="">
 <head>
     <title>Sign Up</title>
     <style>
@@ -63,8 +63,8 @@
 <div class="signup-container">
     <h2>Sign Up</h2>
     <form th:action="@{/signup}" method="post">
-
-        <input type="text" name="uname" placeholder="Username" required />
+        <input type="text" name="uname" placeholder="uname" required />
+        <div th:if="${error}" th:text="${error}" class="alert alert-danger"></div>
 
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" required>
@@ -75,12 +75,12 @@
         <label for="birthdate">Birthdate (yyyy-MM-dd):</label>
         <input type="date" id="birthdate" name="birthdate" required>
 
-        <label for="birthPlace">Birth Place:</label>
+        <label for="birthPlace">Birthplace:</label>
         <input type="text" id="birthPlace" name="birthPlace" required>
 
         <label for="currentCountry">Current Country:</label>
         <input type="text" id="currentCountry" name="currentCountry" required>
-
+        
         <label for="currentCity">Current City:</label>
         <input type="text" id="currentCity" name="currentCity" required>
 
@@ -95,11 +95,6 @@
 
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required minlength="8">
-
-        <div th:if="${error}" th:text="${error}" class="error"></div>
 
         <button type="submit">Sign Up</button>
     </form>

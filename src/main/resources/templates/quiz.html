@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quiz on Music and Math</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .question { margin-bottom: 20px; }
+        label { margin-left: 5px; }
+        button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+    </style>
+</head>
+<body>
+<div id="userGreeting"></div>
+<h1>Music and Math Quiz</h1>
+<form id="quizForm" onsubmit="event.preventDefault(); evaluateQuiz();">
+    <input type="hidden" id="username" name="username" value="">
+    <div class="question">
+        <p>1. Who composed the Four Seasons?</p>
+        <input type="radio" id="vivaldi1" name="question1" value="Vivaldi"><label for="vivaldi1">Vivaldi</label><br>
+        <input type="radio" id="bach1" name="question1" value="Bach"><label for="bach1">Bach</label><br>
+        <input type="radio" id="mozart1" name="question1" value="Mozart"><label for="mozart1">Mozart</label><br>
+        <input type="radio" id="beethoven1" name="question1" value="Beethoven"><label for="beethoven1">Beethoven</label>
+    </div>
+    <!-- Additional questions would continue in a similar fashion -->
+    <button type="submit">Submit Quiz</button>
+</form>
+<div id="result"></div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const username = localStorage.getItem('username');
+        document.getElementById('userGreeting').innerText = username ? `Welcome, ${username}!` : "Welcome, Guest!";
+        document.getElementById('username').value = username || 'Guest';
+    });
+
+    function evaluateQuiz() {
+        const form = document.getElementById('quizForm');
+        const formData = new FormData(form);
+        const answers = { 'question1': 'Vivaldi' }; // Example answer
+        let score = 0;
+        for (const [key, value] of formData) {
+            if (value === answers[key]) {
+                score++;
+            }
+        }
+        formData.append('score', score);
+        fetch('/api/submitQuiz', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(Object.fromEntries(formData))
+        })
+            .then(response => response.json())
+            .then(data => document.getElementById('result').innerText = `Your score: ${data.score}`)
+            .catch(error => document.getElementById('result').innerText = 'Failed to submit quiz.');
+    }
+</script>
+</body>
+</html>
