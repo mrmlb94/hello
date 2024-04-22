@@ -17,7 +17,6 @@ public class QuizResult {
 
     @Column(name = "score")
     private int score;
-
     @Temporal(TemporalType.TIMESTAMP) // This annotation is used to specify the exact time.
     @Column(name = "timestamp", nullable = false, updatable = false)
     private Date timestamp; // This will store the timestamp when the quiz was taken.
