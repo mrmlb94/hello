@@ -58,6 +58,24 @@
             display: block;
         }
     </style>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.querySelector('form');
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the form from submitting immediately
+                storeUsername();
+                setTimeout(function() {
+                    loginForm.submit(); // Submit the form after a short delay
+                }, 500); // Delay in milliseconds
+            });
+        });
+
+        function storeUsername() {
+            var username = document.getElementById('uname').value;
+            sessionStorage.setItem('username', username);
+        }
+    </script>
 </head>
 <body>
 <div class="login-container">

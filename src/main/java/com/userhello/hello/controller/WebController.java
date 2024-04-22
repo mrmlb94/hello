@@ -49,12 +49,13 @@ public class WebController {
     @PostMapping("/login")
     public String login(@RequestParam String uname, Model model, HttpSession session) {
         Optional<User> userOptional = userService.findByUname(uname);
-        if (!userOptional.isPresent()) {
+        if (userOptional.isEmpty()) {
             model.addAttribute("error", "Username not found. Please sign up.");
             return "login"; // Stay on login page and show error
         }
         User user = userOptional.get();
         session.setAttribute("userId", user.getId()); // Storing user ID in session for tracking
+        session.setAttribute("username", user.getUname()); // Storing username in session
         model.addAttribute("name", user.getName());
         return "welcome";
     }
@@ -63,11 +64,11 @@ public class WebController {
     public String welcomePage(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
         if (userId == null) {
-            return "redirect:/login";  // Redirect to login if no user is logged in
+            return "redirect:/login";  // Redirect to log in if no user is logged in
         }
         Optional<User> user = userService.findById(userId);
-        if (!user.isPresent()) {
-            return "redirect:/login";  // Redirect to login if user is not found
+        if (user.isEmpty()) {
+            return "redirect:/login";  // Redirect to log in if user is not found
         }
         model.addAttribute("name", user.get().getName());
         return "welcome";  // Ensure that a 'welcome.html' view exists
@@ -133,7 +134,10 @@ public class WebController {
         }
         userRepository.save(user);
     }
-
-
-
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        session.removeAttribute("userId"); // Remove specific attribute
+        session.removeAttribute("username"); // Ensure username is also removed
+        return "redirect:/login"; // Redirect to login page
+    }
 }

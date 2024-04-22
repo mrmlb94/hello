@@ -9,13 +9,15 @@
         label { margin-left: 5px; }
         button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer; }
         button:hover { background-color: #45a049; }
+        #logoutButton { background-color: #f44336; margin-top: 10px; } /* Logout button style */
+        #backButton { background-color: #008CBA; } /* Back button style */
     </style>
 </head>
 <body>
 <div id="userGreeting"></div>
 <h1>Music and Math Quiz</h1>
 <form id="quizForm" onsubmit="event.preventDefault(); evaluateQuiz();">
-    <input type="hidden" id="username" name="username" value="">
+    <!-- Restoring the quiz questions -->
     <div class="question">
         <p>1. Who composed the Four Seasons?</p>
         <input type="radio" id="vivaldi1" name="question1" value="Vivaldi"><label for="vivaldi1">Vivaldi</label><br>
@@ -23,36 +25,79 @@
         <input type="radio" id="mozart1" name="question1" value="Mozart"><label for="mozart1">Mozart</label><br>
         <input type="radio" id="beethoven1" name="question1" value="Beethoven"><label for="beethoven1">Beethoven</label>
     </div>
-    <!-- Additional questions would continue in a similar fashion -->
+    <div class="question">
+        <p>2. What is the musical term for "getting gradually louder"?</p>
+        <input type="radio" id="crescendo2" name="question2" value="Crescendo"><label for="crescendo2">Crescendo</label><br>
+        <input type="radio" id="decrescendo2" name="question2" value="Decrescendo"><label for="decrescendo2">Decrescendo</label><br>
+        <input type="radio" id="forte2" name="question2" value="Forte"><label for="forte2">Forte</label><br>
+        <input type="radio" id="piano2" name="question2" value="Piano"><label for="piano2">Piano</label>
+    </div>
+    <div class="question">
+        <p>3. What is the square root of 144?</p>
+        <input type="radio" id="12_3" name="question3" value="12"><label for="12_3">12</label><br>
+        <input type="radio" id="14_3" name="question3" value="14"><label for="14_3">14</label><br>
+        <input type="radio" id="16_3" name="question3" value="16"><label for="16_3">16</label><br>
+        <input type="radio" id="18_3" name="question3" value="18"><label for="18_3">18</label>
+    </div>
+    <div class="question">
+        <p>4. What is the value of π (Pi) to three decimal places?</p>
+        <input type="radio" id="3_1414" name="question4" value="3.141"><label for="3_1414">3.141</label><br>
+        <input type="radio" id="3_1514" name="question4" value="3.151"><label for="3_1514">3.151</label><br>
+        <input type="radio" id="3_1214" name="question4" value="3.121"><label for="3_1214">3.121</label><br>
+        <input type="radio" id="3_1314" name="question4" value="3.131"><label for="3_1314">3.131</label>
+    </div>
     <button type="submit">Submit Quiz</button>
+    <button type="button" id="logoutButton" onclick="logoutUser()">Logout</button> <!-- Logout Button -->
+    <button type="button" id="backButton" onclick="goBack()">Back to Welcome</button> <!-- Back to Welcome Button -->
 </form>
 <div id="result"></div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const username = localStorage.getItem('username');
-        document.getElementById('userGreeting').innerText = username ? `Welcome, ${username}!` : "Welcome, Guest!";
-        document.getElementById('username').value = username || 'Guest';
+        const greeting = document.getElementById('userGreeting');
+        const username = sessionStorage.getItem('username');
+        if (username) {
+            greeting.textContent = `Welcome, ${username}!`;
+        } else {
+            greeting.textContent = "Welcome, Dear User!"; // Shows when no username is set in sessionStorage
+        }
     });
 
+
+    function logoutUser() {
+        console.log('Clearing sessionStorage'); // Debug: confirm sessionStorage is cleared
+        sessionStorage.clear();
+        window.location.href = '/login';
+    }
+
+    function goBack() {
+        window.location.href = '/welcome';
+    }
     function evaluateQuiz() {
         const form = document.getElementById('quizForm');
         const formData = new FormData(form);
-        const answers = { 'question1': 'Vivaldi' }; // Example answer
+        const answers = {
+            'question1': 'Vivaldi',
+            'question2': 'Crescendo',
+            'question3': '12',
+            'question4': '3.141'
+        };
         let score = 0;
         for (const [key, value] of formData) {
             if (value === answers[key]) {
                 score++;
             }
         }
-        formData.append('score', score);
         fetch('/api/submitQuiz', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(Object.fromEntries(formData))
+            body: JSON.stringify({
+                username: sessionStorage.getItem('username'),
+                score: score
+            })
         })
             .then(response => response.json())
-            .then(data => document.getElementById('result').innerText = `Your score: ${data.score}`)
+            .then(data => document.getElementById('result').innerText = `Your score: ${score}`)
             .catch(error => document.getElementById('result').innerText = 'Failed to submit quiz.');
     }
 </script>
