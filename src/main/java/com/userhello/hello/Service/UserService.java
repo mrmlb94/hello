@@ -51,4 +51,8 @@ public class UserService {
     public List<User> findAllUsersSortedByName() {
         return userRepository.findAllByOrderByNameAsc();
     }
+
+    public List<User> getAllUsers() {
+        return (List<User>) userRepository.findAll();
+    }
 }
