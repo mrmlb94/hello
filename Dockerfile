@@ -1,17 +1,11 @@
-# Use an official OpenJDK image with a matching Java version
-FROM openjdk:21-jdk
+# Use an official OpenJDK runtime as a parent image
+FROM openjdk:11-jre-slim
 
+# Set the working directory in the container
 WORKDIR /app
 
-COPY mvnw .
-COPY .mvn .mvn
-RUN chmod +x mvnw
+# Copy the executable JAR file into the container
+COPY target/hello-0.0.1-SNAPSHOT.jar app.jar
 
-COPY pom.xml .
-COPY src src
-
-RUN ./mvnw package -DskipTests
-
-
-# Specify the entry point
-ENTRYPOINT ["java","-jar","target/hello-0.0.1-SNAPSHOT.jar"]
+# Run the jar file
+ENTRYPOINT ["java", "-jar", "app.jar"]

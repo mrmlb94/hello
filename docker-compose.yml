@@ -1,24 +1,36 @@
 version: '3.3'
-services:
-  app:
-    build: .
-    ports:
-      - "8080:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/user
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 0000
-    depends_on:
-      - db
 
+services:
   db:
-    image: postgres
+    image: postgres:13
     environment:
       POSTGRES_DB: user
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 0000
+    networks:
+      - hello_network
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: user
+      DB_USERNAME: postgres
+      DB_PASSWORD: 0000
+    ports:
+      - "8080:8080"
+    networks:
+      - hello_network
+
+networks:
+  hello_network:
 
 volumes:
-  postgres_data:
+  db_data:
