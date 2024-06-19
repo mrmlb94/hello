@@ -79,11 +79,3 @@ docker-compose down
 ```
 
 
-You can now copy this content into your `README.md` file and commit it to your GitHub repository. &#8203;:citation[oaicite:0]{index=0}&#8203;
-
-You can now copy this content into your `README.md` file and commit it to your GitHub repository. &#8203;:citation[oaicite:0]{index=0}&#8203;
-
-
-
-
-
