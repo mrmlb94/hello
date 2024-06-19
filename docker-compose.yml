@@ -1,36 +1,30 @@
-version: '3.3'
+version: '3.8'
 
 services:
+  app:
+    image: mrmlb/hello-app
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/user
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 0000
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+
   db:
-    image: postgres:13
+    image: postgres:latest
+    platform: linux/arm64
+    ports:
+      - "5432:5432"
     environment:
       POSTGRES_DB: user
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: 0000
-    networks:
-      - hello_network
-    volumes:
-      - db_data:/var/lib/postgresql/data
-
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - db
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: user
-      DB_USERNAME: postgres
-      DB_PASSWORD: 0000
-    ports:
-      - "8080:8080"
-    networks:
-      - hello_network
 
 networks:
-  hello_network:
-
-volumes:
-  db_data:
+  default:
+    external:
+      name: my-network

@@ -5,31 +5,70 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.boot.test.context.SpringBootTest;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.Duration;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
 public class UserFlowE2ETest {
 
+    private boolean isServerUp(String url) {
+        try {
+            URL serverUrl = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) serverUrl.openConnection();
+            connection.setRequestMethod("GET");
+            connection.connect();
+            int code = connection.getResponseCode();
+            return (code == 200);
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     @Test
-    public void testSignupAndLogin() {
+    public void testSignupAndLogin() throws InterruptedException {
         System.setProperty("webdriver.chrome.driver", "/Users/reza/chromedriver-mac-x64/chromedriver");
-        WebDriver driver = new ChromeDriver();
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--no-sandbox");
+        options.addArguments("--headless");  // Run Chrome in headless mode
+        options.addArguments("--disable-gpu"); // applicable to Windows environment
+        options.addArguments("--window-size=1920,1200");
+        options.addArguments("--ignore-certificate-errors");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--proxy-server='direct://'");
+        options.addArguments("--proxy-bypass-list=*");
+        options.addArguments("--start-maximized");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-browser-side-navigation");
+        options.addArguments("--disable-infobars");
+
+        WebDriver driver = new ChromeDriver(options);
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30)); // Adjust the timeout as needed
+
+        // Wait for the server to start
+        while (!isServerUp("http://localhost:8080/signup")) {
+            System.out.println("Waiting for server to start...");
+            Thread.sleep(1000); // Wait for 1 second
+        }
 
         try {
             driver.get("http://localhost:8080/signup");
 
             System.out.println("Opened signup page");
 
+            String randomUsername = "testuser" + UUID.randomUUID().toString().substring(0, 8);
+
             WebElement unameField = wait.until(ExpectedConditions.elementToBeClickable(By.name("uname")));
-            unameField.sendKeys("testuser");
-            System.out.println("Entered username");
+            unameField.sendKeys(randomUsername);
+            System.out.println("Entered username: " + randomUsername);
 
             WebElement nameField = driver.findElement(By.id("name"));
             nameField.sendKeys("Test");
@@ -75,6 +114,7 @@ public class UserFlowE2ETest {
             submitButton.click();
             System.out.println("Clicked submit button");
 
+            // Check for the presence of the welcome message
             boolean isSignupSuccessful = wait.until(ExpectedConditions.textToBePresentInElementLocated(By.tagName("body"), "Welcome, Test!"));
             assertTrue(isSignupSuccessful, "Signup was not successful");
 
