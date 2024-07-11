@@ -34,7 +34,7 @@ public class UserFlowE2ETest {
 
     @Test
     public void testSignupAndLogin() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", "/Users/reza/chromedriver-mac-x64/chromedriver");
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox");
