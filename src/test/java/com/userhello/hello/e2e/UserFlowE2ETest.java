@@ -9,9 +9,11 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -33,8 +35,27 @@ public class UserFlowE2ETest {
     }
 
     @Test
-    public void testSignupAndLogin() throws InterruptedException {
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+    public void testSignupAndLogin() throws InterruptedException, IOException {
+        String os = System.getProperty("os.name").toLowerCase();
+        String driverPath;
+        if (os.contains("win")) {
+            driverPath = "C:\\Users\\mrmlb\\Documents\\chromedriver_64\\chromedriver-win64\\chromedriver.exe";
+        } else if (os.contains("mac")) {
+            driverPath = "/Users/mrmlb/chromedriver-mac-x64/chromedriver";
+        } else {
+            throw new RuntimeException("Unsupported OS: " + os);
+        }
+
+        // Verify that the driver file exists and is executable
+        File driverFile = new File(driverPath);
+        if (!driverFile.exists()) {
+            throw new RuntimeException("Chromedriver not found at " + driverPath);
+        }
+        if (!driverFile.canExecute()) {
+            throw new RuntimeException("Chromedriver at " + driverPath + " is not executable. Fix permissions with 'chmod +x " + driverPath + "'");
+        }
+
+        System.setProperty("webdriver.chrome.driver", driverPath);
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--no-sandbox");
