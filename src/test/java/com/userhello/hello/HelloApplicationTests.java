@@ -1,5 +1,4 @@
 package com.userhello.hello;
-
 import com.userhello.hello.model.User;
 import com.userhello.hello.repository.UserRepository;
 import com.userhello.hello.Service.UserService;
@@ -7,12 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -37,7 +34,6 @@ public class HelloApplicationTests {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		Date birthdate = sdf.parse("2000-01-01");
 		user.setBirthdate(birthdate);
-
 		user.setBirthPlace("City");
 		user.setCurrentCountry("Country");
 		user.setCurrentCity("City");
