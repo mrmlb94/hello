@@ -15,6 +15,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -68,12 +70,14 @@ public class WebControllerTest {
     public void testSignUpSuccess() throws Exception {
         User user = new User();
         user.setName("test");
+        user.setUname("test");
 
         when(userService.signUp(any(User.class))).thenReturn(user);
 
         mockMvc.perform(post("/signup")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("name", "test"))
+                        .param("name", "test")
+                        .param("uname", "test"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("welcome"))
                 .andExpect(model().attribute("name", "test"));
@@ -81,14 +85,51 @@ public class WebControllerTest {
 
     @Test
     public void testSignUpFailure() throws Exception {
-        when(userService.signUp(any(User.class))).thenThrow(new RuntimeException("error"));
+        when(userService.signUp(any(User.class))).thenThrow(new RuntimeException("Username already exists"));
 
         mockMvc.perform(post("/signup")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("name", "test"))
+                        .param("name", "test")
+                        .param("uname", "test"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("signup"))
-                .andExpect(model().attribute("error", "error"));
+                .andExpect(model().attribute("error", "Username already exists"));
+    }
+
+    @Test
+    public void testSignUpControllerMethod() throws Exception {
+        User user = new User();
+        user.setUname("newuser");
+
+        // Mocking the UserService to return the user when signUp is called
+        when(userService.signUp(any(User.class))).thenReturn(user);
+
+        mockMvc.perform(post("/signup")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("uname", "newuser"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("welcome"))
+                .andExpect(model().attribute("name", user.getName()));
+
+        verify(userService, times(1)).signUp(any(User.class));
+    }
+
+    @Test
+    public void testSignUpControllerMethodFailure() throws Exception {
+        User user = new User();
+        user.setUname("existinguser");
+
+        // Mocking the UserService to throw RuntimeException when signUp is called
+        when(userService.signUp(any(User.class))).thenThrow(new RuntimeException("Username already exists"));
+
+        mockMvc.perform(post("/signup")
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("uname", "existinguser"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("signup"))
+                .andExpect(model().attribute("error", "Username already exists"));
+
+        verify(userService, times(1)).signUp(any(User.class));
     }
 
     @Test
@@ -154,9 +195,13 @@ public class WebControllerTest {
 
     @Test
     public void testListUsers() throws Exception {
+        List<User> users = Collections.singletonList(new User());
+        when(userService.findAllUsers()).thenReturn(users);
+
         mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("users"));
+                .andExpect(view().name("users"))
+                .andExpect(model().attribute("users", users));
     }
 
     @Test

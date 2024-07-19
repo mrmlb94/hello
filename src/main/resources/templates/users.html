@@ -64,7 +64,7 @@
         <th>Birthdate</th>
         <th>Phone</th>
         <th>Current City</th>
-<!--        <th>Latest Score</th>-->
+        <!--        <th>Latest Score</th>-->
         <th>Actions</th>
     </tr>
     </thead>
@@ -75,7 +75,7 @@
         <td th:text="${user.birthdate}"></td>
         <td th:text="${user.phone}"></td>
         <td th:text="${user.currentCity}"></td>
-<!--        <td th:text="${user.score}"></td>-->
+        <!--        <td th:text="${user.score}"></td>-->
         <td>
             <a th:href="@{/editUser/{id}(id=${user.id})}">Edit</a>
             <form th:action="@{/deleteUser/{id}(id=${user.id})}" method="post">
