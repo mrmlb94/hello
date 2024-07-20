@@ -3,9 +3,7 @@ package com.userhello.hello.e2e;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -27,6 +25,15 @@ public class UserListPageTest {
         System.setProperty("webdriver.chrome.driver", "/Users/mrmlb/chromedriver-mac-x64/chromedriver");
         driver = new ChromeDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        driver.manage().window().setSize(new Dimension(1280, 1024));  // Set a consistent window size
+
+        // Clear cache and refresh
+        driver.manage().deleteAllCookies();
+        driver.get("http://localhost:8080/users");
+        driver.navigate().refresh();
+
+        // Zoom out by 20%
+        ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='80%'");
     }
 
     @AfterEach

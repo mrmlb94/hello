@@ -3,9 +3,7 @@ package com.userhello.hello.e2e;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -24,7 +22,8 @@ public class SignupPageTest {
         // Set the path to the chromedriver executable
         System.setProperty("webdriver.chrome.driver", "/Users/mrmlb/chromedriver-mac-x64/chromedriver");
         driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(40));
+        driver.manage().window().setSize(new Dimension(1280, 1024));  // Ensure browser window size is appropriate
     }
 
     @AfterEach
@@ -38,6 +37,9 @@ public class SignupPageTest {
     public void testSignup() {
         // Replace with the URL of your web application
         driver.get("http://localhost:8080/signup");
+
+        // Ensure the page is fully loaded and refreshed to avoid caching issues
+        driver.navigate().refresh();
 
         // Fill in the signup form
         wait.until(ExpectedConditions.presenceOfElementLocated(By.name("uname"))).sendKeys("testuser");
