@@ -1,10 +1,14 @@
 package com.userhello.hello.e2e;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.*;
+import org.junit.jupiter.api.TestInstance;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -12,35 +16,27 @@ import java.time.Duration;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UserListPageTest {
+    private static WebDriver driver;
+    private static WebDriverWait wait;
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    @BeforeAll
+    public static void setUp() {
+        // Setting system properties for WebDriver, assuming ChromeDriver is available in the path specified in the Dockerfile
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
 
-    @BeforeEach
-    public void setUp() {
-        // Set the path to the chromedriver executable
-        System.setProperty("webdriver.chrome.driver", "/Users/mrmlb/chromedriver-mac-x64/chromedriver");
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        driver.manage().window().setSize(new Dimension(1280, 1024));  // Set a consistent window size
+        // Setup Chrome options for running headless
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");  // Ensure it runs in headless mode
+        options.addArguments("--no-sandbox");  // Bypass OS security model, required for Docker
+        options.addArguments("--disable-dev-shm-usage");  // Overcome limited resource problems
+        options.addArguments("--disable-gpu");  // GPU hardware acceleration isn't useful for tests
 
-        // Clear cache and refresh
-        driver.manage().deleteAllCookies();
-        driver.get("http://localhost:8080/users");
-        driver.navigate().refresh();
-
-        // Zoom out by 20%
-        ((JavascriptExecutor) driver).executeScript("document.body.style.zoom='80%'");
-    }
-
-    @AfterEach
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10)); // Adjusted wait time for better stability
     }
 
     @Test
@@ -73,7 +69,7 @@ public class UserListPageTest {
 
         // Verify that the table is populated with user data
         List<WebElement> rows = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("tbody tr")));
-        assertTrue(rows.size() > 0, "User list table is empty");
+        assertFalse(rows.isEmpty(), "User list table is empty");
 
         // Click "Edit" for the first user
         WebElement editLink = rows.get(0).findElement(By.linkText("Edit"));
@@ -92,6 +88,13 @@ public class UserListPageTest {
         // Verify the user is redirected back to the user list page
         driver.get("http://localhost:8080/users");
         rows = wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.cssSelector("tbody tr")));
-        assertTrue(rows.size() > 0, "User list table is empty after update");
+        assertFalse(rows.isEmpty(), "User list table is empty after update");
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }

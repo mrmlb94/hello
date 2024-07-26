@@ -1,37 +1,35 @@
 package com.userhello.hello.e2e;
-
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-
 import java.time.Duration;
-
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class QuizPageTest {
+    private static WebDriver driver;
+    private static WebDriverWait wait;
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    @BeforeAll
+    public static void setUp() {
+        // Setting system properties for WebDriver, assuming ChromeDriver is available in the path specified in the Dockerfile
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        // Setup Chrome options for running headless
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");  // Ensure it runs in headless mode
+        options.addArguments("--no-sandbox");  // Bypass OS security model, required for Docker
+        options.addArguments("--disable-dev-shm-usage");  // Overcome limited resource problems
+        options.addArguments("--disable-gpu");  // GPU hardware acceleration isn't useful for tests
 
-    @BeforeEach
-    public void setUp() {
-        // Set the path to the chromedriver executable
-        System.setProperty("webdriver.chrome.driver", "/Users/mrmlb/chromedriver-mac-x64/chromedriver");
-        driver = new ChromeDriver();
+        driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-    }
-
-    @AfterEach
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
     }
 
     @Test
@@ -54,5 +52,12 @@ public class QuizPageTest {
         // Verify the user is redirected to the login page
         boolean urlChanged = wait.until(ExpectedConditions.urlToBe("http://localhost:8080/login"));
         assertTrue(urlChanged, "URL did not change to the expected login page");
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }

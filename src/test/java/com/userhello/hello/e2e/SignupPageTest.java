@@ -1,10 +1,13 @@
 package com.userhello.hello.e2e;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.openqa.selenium.*;
+import org.junit.jupiter.api.TestInstance;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -12,25 +15,24 @@ import java.time.Duration;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class SignupPageTest {
+    private static WebDriver driver;
+    private static WebDriverWait wait;
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    @BeforeAll
+    public static void setUp() {
+        // Setting system properties for WebDriver, assuming ChromeDriver is available in the path specified in the Dockerfile
+        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        // Setup Chrome options for running headless
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--headless");  // Ensure it runs in headless mode
+        options.addArguments("--no-sandbox");  // Bypass OS security model, required for Docker
+        options.addArguments("--disable-dev-shm-usage");  // Overcome limited resource problems
+        options.addArguments("--disable-gpu");  // GPU hardware acceleration isn't useful for tests
 
-    @BeforeEach
-    public void setUp() {
-        // Set the path to the chromedriver executable
-        System.setProperty("webdriver.chrome.driver", "/Users/mrmlb/chromedriver-mac-x64/chromedriver");
-        driver = new ChromeDriver();
-        wait = new WebDriverWait(driver, Duration.ofSeconds(40));
-        driver.manage().window().setSize(new Dimension(1280, 1024));  // Ensure browser window size is appropriate
-    }
-
-    @AfterEach
-    public void tearDown() {
-        if (driver != null) {
-            driver.quit();
-        }
+        driver = new ChromeDriver(options);
+        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
     }
 
     @Test
@@ -40,7 +42,6 @@ public class SignupPageTest {
 
         // Ensure the page is fully loaded and refreshed to avoid caching issues
         driver.navigate().refresh();
-
         // Fill in the signup form
         wait.until(ExpectedConditions.presenceOfElementLocated(By.name("uname"))).sendKeys("testuser");
         driver.findElement(By.id("name")).sendKeys("Test");
@@ -64,9 +65,12 @@ public class SignupPageTest {
         String expectedUrl = "http://localhost:8080/signup"; // Adjust based on your app's behavior
         boolean urlChanged = wait.until(ExpectedConditions.urlToBe(expectedUrl));
         assertTrue(urlChanged, "URL did not change to the expected value");
+    }
 
-        // Alternatively, you can check for a success message or a specific element on the next page
-        // WebElement successMessage = wait.until(ExpectedConditions.presenceOfElementLocated(By.id("successMessage")));
-        // assertTrue(successMessage.isDisplayed(), "Success message not displayed");
+    @AfterAll
+    public static void tearDown() {
+        if (driver != null) {
+            driver.quit();
+        }
     }
 }

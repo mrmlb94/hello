@@ -31,3 +31,17 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore node_modules
+node_modules
+
+# Ignore log files
+*.log
+
+# Ignore Docker files
+Dockerfile
+docker-compose.yml
+
+# Ignore version control directories
+.git
+.gitignore

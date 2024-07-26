@@ -1,30 +1,40 @@
-version: '3.8'
+version: '3.9'
 
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres
     environment:
       POSTGRES_DB: user_db
       POSTGRES_USER: postgres001
       POSTGRES_PASSWORD: Am2836
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
+    networks:
+      - mynetwork
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d user_db -U postgres001"]
+      interval: 10s
+      retries: 5
 
   webapp:
     build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
     ports:
       - "8080:8080"
-    depends_on:
-      - postgres
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
       SPRING_DATASOURCE_USERNAME: postgres001
       SPRING_DATASOURCE_PASSWORD: Am2836
-    entrypoint: ["./wait-for-postgres.sh", "postgres", "5432", "mvn", "spring-boot:run"]
+    networks:
+      - mynetwork
 
 volumes:
   postgres_data:
-  db_data:
+
+networks:
+  mynetwork:
