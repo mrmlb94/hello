@@ -125,7 +125,7 @@ public class WebController {
     }
 
     @Autowired
-    private UserRepository userRepository;
+    UserRepository userRepository;
 
     public void signUp(User user) {
         Optional<User> existingUser = userRepository.findByUname(user.getUname());

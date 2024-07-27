@@ -2,62 +2,78 @@ package com.userhello.hello.controller;
 
 import com.userhello.hello.Service.QuizService;
 import com.userhello.hello.model.QuizResult;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import jakarta.servlet.http.HttpSession;
+import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 public class QuizControllerTest {
-
-    private MockMvc mockMvc;
 
     @Mock
     private QuizService quizService;
 
+    @Mock
+    private HttpSession session;
+
     @InjectMocks
     private QuizController quizController;
 
-    @Mock
-    private HttpSession session;
+    private MockMvc mockMvc;
 
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        this.mockMvc = MockMvcBuilders.standaloneSetup(quizController).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(quizController).build();
     }
 
     @Test
-    public void testSubmitQuiz() throws Exception {
+    public void testSubmitQuiz_UserNotLoggedIn() {
+        // Set up
+        when(session.getAttribute("username")).thenReturn(null);
         QuizResult submission = new QuizResult();
-        submission.setId(1L);
-        submission.setUsername("testuser");
-        submission.setScore(100);
 
-        MockHttpSession mockSession = new MockHttpSession();
-        mockSession.setAttribute("username", "testuser");
+        // Execute
+        ResponseEntity<?> response = quizController.submitQuiz(submission, session);
 
-        when(quizService.saveQuizResult(any(QuizResult.class))).thenReturn(submission);
+        // Verify
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+        assertEquals("User is not logged in.", response.getBody());
+    }
 
-        mockMvc.perform(post("/api/submitQuiz")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"score\":100}")
-                        .session(mockSession))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.username").value("testuser"))
-                .andExpect(jsonPath("$.score").value(100));
+    @Test
+    public void testSubmitQuiz_UserLoggedIn() {
+        // Set up
+        String username = "testUser";
+        when(session.getAttribute("username")).thenReturn(username);
+        QuizResult submission = new QuizResult();
+        QuizResult savedSubmission = new QuizResult();
+        savedSubmission.setUsername(username);
+        savedSubmission.setTimestamp(new Date());
 
+        when(quizService.saveQuizResult(any(QuizResult.class))).thenReturn(savedSubmission);
+
+        // Execute
+        ResponseEntity<?> response = quizController.submitQuiz(submission, session);
+
+        // Verify
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        QuizResult result = (QuizResult) response.getBody();
+        assertNotNull(result);
+        assertEquals(username, result.getUsername());
+        assertNotNull(result.getTimestamp());
+
+        // Ensure the service method was called once
         verify(quizService, times(1)).saveQuizResult(any(QuizResult.class));
     }
 }

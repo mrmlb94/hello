@@ -13,8 +13,7 @@ WORKDIR /app
 COPY . .
 
 # Build the application using Maven
-RUN mvn package -DskipTests  # Skip tests here; we'll handle them separately
-
+RUN mvn package -DskipTests
 # Expose the port the app runs on
 EXPOSE 8080
 

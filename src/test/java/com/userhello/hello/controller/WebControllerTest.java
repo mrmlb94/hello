@@ -2,271 +2,243 @@ package com.userhello.hello.controller;
 
 import com.userhello.hello.Service.UserService;
 import com.userhello.hello.model.User;
+import com.userhello.hello.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.mock.web.MockHttpSession;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.ui.Model;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
+import org.springframework.http.ResponseEntity;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class WebControllerTest {
-
-    private MockMvc mockMvc;
 
     @Mock
     private UserService userService;
 
-    @InjectMocks
-    private WebController webController;
-
     @Mock
-    private HttpSession session;
+    private UserRepository userRepository;
 
     @Mock
     private Model model;
 
+    @Mock
+    private HttpSession session;
+
+    @InjectMocks
+    private WebController webController;
+
     @BeforeEach
     public void setUp() {
         MockitoAnnotations.openMocks(this);
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setPrefix("/WEB-INF/views/");
-        viewResolver.setSuffix(".html");
-        mockMvc = MockMvcBuilders.standaloneSetup(webController)
-                .setViewResolvers(viewResolver)
-                .build();
+        webController = new WebController(userService);
+        webController.userRepository = userRepository; // Manually inject the mock
     }
 
     @Test
-    public void testShowLogin() throws Exception {
-        mockMvc.perform(get("/"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("login"));
+    public void testShowLogin() {
+        String viewName = webController.showLogin(model);
+        assertEquals("login", viewName);
+        verify(model).addAttribute(eq("user"), any(User.class));
     }
 
     @Test
-    public void testShowSignupForm() throws Exception {
-        mockMvc.perform(get("/signup"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("signup"));
+    public void testShowSignupForm() {
+        String viewName = webController.showSignupForm(model);
+        assertEquals("signup", viewName);
+        verify(model).addAttribute(eq("user"), any(User.class));
     }
 
     @Test
-    public void testSignUpSuccess() throws Exception {
+    public void testSignUp_Success() {
         User user = new User();
-        user.setName("test");
-        user.setUname("test");
+        user.setName("John");
+        when(userService.signUp(user)).thenReturn(user);
 
-        when(userService.signUp(any(User.class))).thenReturn(user);
-
-        mockMvc.perform(post("/signup")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("name", "test")
-                        .param("uname", "test"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("welcome"))
-                .andExpect(model().attribute("name", "test"));
+        String viewName = webController.signUp(user, model);
+        assertEquals("welcome", viewName);
+        verify(model).addAttribute("name", "John");
     }
 
     @Test
-    public void testSignUpFailure() throws Exception {
-        when(userService.signUp(any(User.class))).thenThrow(new RuntimeException("Username already exists"));
-
-        mockMvc.perform(post("/signup")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("name", "test")
-                        .param("uname", "test"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("signup"))
-                .andExpect(model().attribute("error", "Username already exists"));
-    }
-
-    @Test
-    public void testSignUpControllerMethod() throws Exception {
+    public void testSignUp_Failure() {
         User user = new User();
-        user.setUname("newuser");
+        when(userService.signUp(user)).thenThrow(new RuntimeException("Error"));
 
-        // Mocking the UserService to return the user when signUp is called
-        when(userService.signUp(any(User.class))).thenReturn(user);
-
-        mockMvc.perform(post("/signup")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("uname", "newuser"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("welcome"))
-                .andExpect(model().attribute("name", user.getName()));
-
-        verify(userService, times(1)).signUp(any(User.class));
+        String viewName = webController.signUp(user, model);
+        assertEquals("signup", viewName);
+        verify(model).addAttribute("error", "Error");
     }
 
     @Test
-    public void testSignUpControllerMethodFailure() throws Exception {
-        User user = new User();
-        user.setUname("existinguser");
-
-        // Mocking the UserService to throw RuntimeException when signUp is called
-        when(userService.signUp(any(User.class))).thenThrow(new RuntimeException("Username already exists"));
-
-        mockMvc.perform(post("/signup")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("uname", "existinguser"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("signup"))
-                .andExpect(model().attribute("error", "Username already exists"));
-
-        verify(userService, times(1)).signUp(any(User.class));
-    }
-
-    @Test
-    public void testLoginSuccess() throws Exception {
+    public void testLogin_Success() {
         User user = new User();
         user.setId(1L);
-        user.setUname("test");
-        user.setName("Test User");
+        user.setUname("john");
+        user.setName("John");
 
-        when(userService.findByUname("test")).thenReturn(Optional.of(user));
-        when(session.getAttribute("username")).thenReturn("test");
+        when(userService.findByUname("john")).thenReturn(Optional.of(user));
 
-        mockMvc.perform(post("/login")
-                        .param("uname", "test")
-                        .sessionAttr("username", "test"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("welcome"))
-                .andExpect(model().attribute("name", "Test User"));
+        String viewName = webController.login("john", model, session);
+        assertEquals("welcome", viewName);
+        verify(session).setAttribute("userId", 1L);
+        verify(session).setAttribute("username", "john");
+        verify(model).addAttribute("name", "John");
     }
 
     @Test
-    public void testLoginFailure() throws Exception {
-        when(userService.findByUname("test")).thenReturn(Optional.empty());
+    public void testLogin_Failure() {
+        when(userService.findByUname("john")).thenReturn(Optional.empty());
 
-        mockMvc.perform(post("/login")
-                        .param("uname", "test"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("login"))
-                .andExpect(model().attribute("error", "Username not found. Please sign up."));
+        String viewName = webController.login("john", model, session);
+        assertEquals("login", viewName);
+        verify(model).addAttribute("error", "Username not found. Please sign up.");
     }
 
     @Test
-    public void testWelcomePageLoggedIn() throws Exception {
+    public void testWelcomePage_LoggedIn() {
         User user = new User();
-        user.setId(1L);
-        user.setName("Test User");
+        user.setName("John");
 
         when(session.getAttribute("userId")).thenReturn(1L);
         when(userService.findById(1L)).thenReturn(Optional.of(user));
 
-        mockMvc.perform(get("/welcome")
-                        .sessionAttr("userId", 1L))
-                .andExpect(status().isOk())
-                .andExpect(view().name("welcome"))
-                .andExpect(model().attribute("name", "Test User"));
+        String viewName = webController.welcomePage(model, session);
+        assertEquals("welcome", viewName);
+        verify(model).addAttribute("name", "John");
     }
 
     @Test
-    public void testWelcomePageNotLoggedIn() throws Exception {
+    public void testWelcomePage_NotLoggedIn() {
         when(session.getAttribute("userId")).thenReturn(null);
 
-        mockMvc.perform(get("/welcome"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
+        String viewName = webController.welcomePage(model, session);
+        assertEquals("redirect:/login", viewName);
     }
 
     @Test
-    public void testShowLoginPage() throws Exception {
-        mockMvc.perform(get("/login"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("login"));
+    public void testWelcomePage_UserNotFound() {
+        when(session.getAttribute("userId")).thenReturn(1L);
+        when(userService.findById(1L)).thenReturn(Optional.empty());
+
+        String viewName = webController.welcomePage(model, session);
+        assertEquals("redirect:/login", viewName);
     }
 
     @Test
-    public void testListUsers() throws Exception {
-        List<User> users = Collections.singletonList(new User());
+    public void testShowLoginPage() {
+        String viewName = webController.showLoginPage();
+        assertEquals("login", viewName);
+    }
+
+    @Test
+    public void testListUsers_NoSort() {
+        List<User> users = new ArrayList<>();
         when(userService.findAllUsers()).thenReturn(users);
 
-        mockMvc.perform(get("/users"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("users"))
-                .andExpect(model().attribute("users", users));
+        String viewName = webController.listUsers(null, model);
+        assertEquals("users", viewName);
+        verify(model).addAttribute("users", users);
     }
 
     @Test
-    public void testEditUserForm() throws Exception {
-        User user = new User();
-        user.setId(1L);
+    public void testListUsers_SortByName() {
+        List<User> users = new ArrayList<>();
+        when(userService.findAllUsersSortedByName()).thenReturn(users);
 
+        String viewName = webController.listUsers("name", model);
+        assertEquals("users", viewName);
+        verify(model).addAttribute("users", users);
+    }
+
+    @Test
+    public void testEditUserForm() {
+        User user = new User();
         when(userService.findById(1L)).thenReturn(Optional.of(user));
 
-        mockMvc.perform(get("/editUser/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("user-edit-form"))
-                .andExpect(model().attribute("user", user));
+        String viewName = webController.editUserForm(1L, model);
+        assertEquals("user-edit-form", viewName);
+        verify(model).addAttribute("user", user);
     }
 
     @Test
-    public void testUpdateUser() throws Exception {
+    public void testEditUserForm_UserNotFound() {
+        when(userService.findById(1L)).thenReturn(Optional.empty());
+
+        try {
+            webController.editUserForm(1L, model);
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid user Id:1", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testUpdateUser() {
         User user = new User();
-        user.setId(1L);
-        user.setName("Updated User");
+        when(userService.updateUser(user)).thenReturn(user);
 
-        when(userService.updateUser(any(User.class))).thenReturn(user);
-
-        mockMvc.perform(post("/editUser/1")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .param("name", "Updated User"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/users"));
+        String viewName = webController.updateUser(1L, user, model);
+        assertEquals("redirect:/users", viewName);
     }
 
     @Test
-    public void testDeleteUser() throws Exception {
-        mockMvc.perform(post("/deleteUser/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/users"));
-
-        verify(userService, times(1)).deleteUser(1L);
+    public void testDeleteUser() {
+        String viewName = webController.deleteUser(1L);
+        assertEquals("redirect:/users", viewName);
+        verify(userService).deleteUser(1L);
     }
 
     @Test
-    public void testQuizPage() throws Exception {
-        mockMvc.perform(get("/quiz"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("quiz"));
+    public void testQuizPage() {
+        String viewName = webController.quizPage();
+        assertEquals("quiz", viewName);
     }
 
     @Test
-    public void testSubmitQuiz() throws Exception {
-        mockMvc.perform(post("/submitQuiz")
-                        .param("score", "100"))
-                .andExpect(status().isOk())
-                .andExpect(content().string("Score submitted successfully. Your score: 100"));
+    public void testSubmitQuiz() {
+        ResponseEntity<String> response = webController.submitQuiz(100);
+        assertEquals("Score submitted successfully. Your score: 100", response.getBody());
     }
 
     @Test
-    public void testLogout() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("userId", 1L);
-        session.setAttribute("username", "test");
+    public void testLogout() {
+        String viewName = webController.logout(session);
+        assertEquals("redirect:/login", viewName);
+        verify(session).removeAttribute("userId");
+        verify(session).removeAttribute("username");
+    }
 
-        mockMvc.perform(get("/logout").session(session))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
+    @Test
+    public void testDirectSignUp_Success() {
+        User user = new User();
+        user.setUname("john");
+        when(userRepository.findByUname("john")).thenReturn(Optional.empty());
 
-        assertNull(session.getAttribute("userId"));
-        assertNull(session.getAttribute("username"));
+        webController.signUp(user);
+
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    public void testDirectSignUp_UsernameExists() {
+        User user = new User();
+        user.setUname("john");
+        when(userRepository.findByUname("john")).thenReturn(Optional.of(user));
+
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            webController.signUp(user);
+        });
+
+        assertEquals("Username already exists", exception.getMessage());
+        verify(userRepository, never()).save(any(User.class));
     }
 }

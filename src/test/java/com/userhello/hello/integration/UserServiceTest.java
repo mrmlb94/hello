@@ -211,4 +211,15 @@ public class UserServiceTest {
         assertNull(foundUser);
         verify(userRepository).findById(1L);
     }
+
+    @Test
+    void testCreateUser() {
+        when(userRepository.save(john)).thenReturn(john);
+
+        User createdUser = userService.createUser(john);
+
+        assertNotNull(createdUser);
+        assertEquals("John", createdUser.getName());
+        verify(userRepository).save(john);
+    }
 }
