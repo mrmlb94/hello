@@ -51,6 +51,22 @@ jobs:
         java-version: '17'
         distribution: 'temurin'  # Changed to Temurin as it's the successor to Adopt OpenJDK
 
+    
+    
+    - name: Wait for application to become ready
+      run: |
+        for i in {1..30}; do
+          if curl --output /dev/null --silent --head --fail http://localhost:8080; then
+            echo "Application started"
+            break
+          fi
+          echo "Waiting for application to start..."
+          sleep 10
+        done
+
+
+
+
     - name: Run Maven tests and generate JaCoCo report
       run: mvn clean test jacoco:report
 
