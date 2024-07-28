@@ -24,6 +24,11 @@ jobs:
     - name: Build and start containers
       run: docker-compose up -d --build
 
-    - name: Coveralls GitHub Action
-      uses: coverallsapp/github-action@v2.3.0
-            
+      
+    - name: Run Maven build and coverage report
+      run: mvn clean verify jacoco:report
+    
+    - name: Upload coverage to Coveralls
+      run: mvn coveralls:report
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
