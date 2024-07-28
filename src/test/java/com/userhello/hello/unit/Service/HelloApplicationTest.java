@@ -20,7 +20,7 @@ public class HelloApplicationTest {
     @Test
     public void testMain() {
         SpringApplication application = new SpringApplication(HelloApplication.class);
-        application.setDefaultProperties(Collections.singletonMap("server.port", "8081"));
+        application.setDefaultProperties(Collections.singletonMap("server.port", "8085"));
         application.run();
     }
 }
