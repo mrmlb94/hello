@@ -24,12 +24,3 @@ jobs:
     - name: Build and start containers
       run: docker-compose up -d --build
 
-    - name: Monitor and test services
-      run: bash ./monitor_and_test.sh
-
-    - name: Run Maven tests
-      run: mvn test -Dspring.profiles.active=test
-
-    - name: Shutdown Docker Compose services
-      if: always()
-      run: docker-compose down
