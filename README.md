@@ -1,3 +1,6 @@
+[![CI with Docker Compose and Maven](https://github.com/mrmlb94/hello/actions/workflows/maven.yml/badge.svg)](https://github.com/mrmlb94/hello/actions/workflows/maven.yml)
+
+
 # Hello Application
 
 This repository contains the source code for the Hello application. 
