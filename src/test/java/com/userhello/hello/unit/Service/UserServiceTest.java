@@ -8,7 +8,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataAccessException;
 
 import java.util.Arrays;
 import java.util.List;
@@ -86,9 +85,20 @@ public class UserServiceTest {
         List<User> userList = Arrays.asList(new User("user1"), new User("user2"));
         when(userRepository.findAll()).thenReturn(userList);
 
-        List<User> users = userService.getAllUsers();
+        List<User> users = userService.findAllUsers();
 
         assertEquals(2, users.size());
         verify(userRepository).findAll();
+    }
+
+    @Test
+    void testFindAllUsersSortedByName() {
+        List<User> userList = Arrays.asList(new User("user1"), new User("user2"));
+        when(userRepository.findAllByOrderByNameAsc()).thenReturn(userList);
+
+        List<User> users = userService.findAllUsersSortedByName();
+
+        assertEquals(2, users.size());
+        verify(userRepository).findAllByOrderByNameAsc();
     }
 }

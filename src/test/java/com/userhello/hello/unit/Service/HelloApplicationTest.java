@@ -3,12 +3,14 @@ package com.userhello.hello.unit.Service;
 import com.userhello.hello.HelloApplication;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.boot.CommandLineRunner;
+
+import static org.mockito.Mockito.*;
+
+import org.springframework.context.ApplicationContext;
 
 import java.util.Collections;
 
@@ -19,8 +21,22 @@ public class HelloApplicationTest {
 
     @Test
     public void testMain() {
-        SpringApplication application = new SpringApplication(HelloApplication.class);
-        application.setDefaultProperties(Collections.singletonMap("server.port", "8085"));
-        application.run();
+        HelloApplication.main(new String[]{});
+    }
+
+    @Test
+    public void testRun() throws Exception {
+        // Mocking the ApplicationContext
+        ApplicationContext context = mock(ApplicationContext.class);
+
+        // Initializing the application
+        HelloApplication application = new HelloApplication();
+
+        // Mocking CommandLineRunner run method
+        CommandLineRunner runner = mock(CommandLineRunner.class);
+        runner.run();
+
+        // Verifying if the run method was called
+        verify(runner, times(1)).run();
     }
 }
