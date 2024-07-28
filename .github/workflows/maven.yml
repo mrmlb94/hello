@@ -23,3 +23,27 @@ jobs:
 
     - name: Build and start containers
       run: docker-compose up -d --build
+
+    - name: Wait for application to start
+      run: |
+        until $(curl --output /dev/null --silent --head --fail http://localhost:8080); do
+          printf '.'
+          sleep 5
+        done
+
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+
+    - name: Run Maven tests and generate JaCoCo report
+      run: mvn clean test jacoco:report
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4.0.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./target/site/jacoco/jacoco.xml
+        flags: unittests
+        name: Codecov Reports
