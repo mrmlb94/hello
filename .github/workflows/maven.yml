@@ -24,3 +24,6 @@ jobs:
     - name: Build and start containers
       run: docker-compose up -d --build
 
+    - name: Coveralls GitHub Action
+      uses: coverallsapp/github-action@v2.3.0
+            
