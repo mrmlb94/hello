@@ -23,3 +23,11 @@ jobs:
 
     - name: Build and start containers
       run: docker-compose up -d --build
+
+
+
+    
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v4.0.1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
