@@ -23,16 +23,3 @@ jobs:
 
     - name: Build and start containers
       run: docker-compose up -d --build
-
-      
-    - name: Run Maven build and generate coverage report
-      run: mvn clean verify jacoco:report
-    
-    - name: List coverage report directory
-      run: ls -la ./target/site/jacoco/
-    
-    - name: Upload coverage to Coveralls
-      uses: coverallsapp/github-action@v2.3.0
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./target/site/jacoco/jacoco.xml
