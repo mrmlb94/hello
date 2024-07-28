@@ -1,5 +1,5 @@
 [![CI with Docker Compose and Maven](https://github.com/mrmlb94/hello/actions/workflows/maven.yml/badge.svg)](https://github.com/mrmlb94/hello/actions/workflows/maven.yml)
-
+[![codecov](https://codecov.io/github/mrmlb94/hello/graph/badge.svg?token=UZPZ0UC5J3)](https://codecov.io/github/mrmlb94/hello)
 
 # Hello Application
 
