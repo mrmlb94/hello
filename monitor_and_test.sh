@@ -39,9 +39,9 @@ while [[ "$(check_health hello_webapp_1)" != "healthy" ]]; do
   sleep 5
 done
 
-# Wait additional 10 seconds
-echo "Webapp is healthy. Waiting additional 10 seconds."
-sleep 10
+# Wait additional 30 seconds to ensure full initialization
+echo "Webapp is healthy. Waiting additional 30 seconds."
+sleep 30
 
 # Run Maven tests with the test profile
 echo "Running Maven tests..."
