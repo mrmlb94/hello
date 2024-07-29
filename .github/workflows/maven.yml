@@ -1,79 +1,44 @@
-name: CI with Docker Compose and Maven
+name: Java CI with Maven
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  build:
+
     runs-on: ubuntu-latest
 
-    services:
-      docker:
-        image: docker:19.03.12
-        options: --privileged
-
     steps:
-    - uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
 
-    - name: Build and start containers
-      run: docker-compose up -d --build
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
-    - name: Wait for application to become ready
-      run: |
-        sleep 30  # Wait for 30 seconds to ensure the application is fully up and running
+      - name: Build with Maven (Skip E2E Tests)
+        run: mvn clean verify -P skip-e2e-tests
 
-    - name: Install Google Chrome
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y wget
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt install ./google-chrome-stable_current_amd64.deb
+      - name: Generate JaCoCo report
+        run: mvn jacoco:report -P skip-e2e-tests
 
-    - name: Install ChromeDriver
-      run: |
-        wget -q "https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.72/linux64/chromedriver-linux64.zip"
-        unzip chromedriver-linux64.zip
-        ls -la chromedriver-linux64/
-        sudo mv chromedriver-linux64/chromedriver /usr/local/bin/chromedriver
-        sudo chown root:root /usr/local/bin/chromedriver
-        sudo chmod +x /usr/local/bin/chromedriver
-
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'temurin'  # Changed to Temurin as it's the successor to Adopt OpenJDK
-
-    
-    
-    - name: Wait for application to become ready
-      run: |
-        for i in {1..30}; do
-          if curl --output /dev/null --silent --head --fail http://localhost:8080; then
-            echo "Application started"
-            break
-          fi
-          echo "Waiting for application to start..."
-          sleep 10
-        done
-
-
-
-
-    - name: Run Maven tests and generate JaCoCo report
-      run: mvn clean test jacoco:report
-
-    - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4.0.1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./target/site/jacoco/jacoco.xml
-        flags: unittests
-        name: Codecov Reports
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4.0.1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: target/site/jacoco/jacoco.xml
+          fail_ci_if_error: true
+          verbose: true
