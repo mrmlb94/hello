@@ -1,4 +1,4 @@
-name: CI with Docker Compose and Maven
+name: CI with Docker, Maven, and Spring Boot
 
 on:
   push:
@@ -9,62 +9,49 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-
     services:
-      docker:
-        image: docker:19.03.12
-        options: --privileged
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: user_db
+          POSTGRES_USER: postgres001
+          POSTGRES_PASSWORD: Am2836
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+    - name: Build the Docker image
+      run: docker build -t hello-webapp .
 
-    - name: Build and start containers
-      run: docker-compose up -d --build
-
-    - name: Wait for application to become ready
+    - name: Start the application
       run: |
-        sleep 30  # Wait for 30 seconds to ensure the application is fully up and running
+        docker run -d --name webapp \
+          --network container:postgres \
+          -e SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/user_db \
+          -e SPRING_DATASOURCE_USERNAME=postgres001 \
+          -e SPRING_DATASOURCE_PASSWORD=Am2836 \
+          -p 8080:8081 hello-webapp
 
-    - name: Install Google Chrome
+    - name: Wait for the application to be ready
       run: |
-        sudo apt-get update
-        sudo apt-get install -y wget
-        wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo apt install ./google-chrome-stable_current_amd64.deb
-
-
-    - name: Set up JDK 17
-      uses: actions/setup-java@v2
-      with:
-        java-version: '17'
-        distribution: 'temurin'  # Changed to Temurin as it's the successor to Adopt OpenJDK
-
-    
-    
-    - name: Wait for application to become ready
-      run: |
-        for i in {1..30}; do
-          if curl --output /dev/null --silent --head --fail http://localhost:8080; then
-            echo "Application started"
-            break
-          fi
-          echo "Waiting for application to start..."
+        echo "Waiting for webapp to be healthy..."
+        until [ "$(docker inspect --format='{{.State.Health.Status}}' webapp)" == "healthy" ]; do
+          echo "Current status: $(docker inspect --format='{{.State.Health.Status}}' webapp)"
           sleep 10
         done
 
-
-
-
-    - name: Run Maven tests and generate JaCoCo report
-      run: mvn clean test jacoco:report
+    - name: Run tests
+      run: mvn clean test
 
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v4.0.1
+      uses: codecov/codecov-action@v2
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
         files: ./target/site/jacoco/jacoco.xml
         flags: unittests
-        name: Codecov Reports
