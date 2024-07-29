@@ -1,5 +1,6 @@
 package com.userhello.hello.e2e;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -23,12 +24,15 @@ public class CombinedE2ETest {
 
     @BeforeAll
     public static void setUp() {
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        // Use WebDriverManager to manage ChromeDriver
+        WebDriverManager.chromedriver().setup();
+
+        // Setup Chrome options for running headless
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-gpu");
+        options.addArguments("--headless");  // Ensure it runs in headless mode
+        options.addArguments("--no-sandbox");  // Bypass OS security model, required for Docker
+        options.addArguments("--disable-dev-shm-usage");  // Overcome limited resource problems
+        options.addArguments("--disable-gpu");  // GPU hardware acceleration isn't useful for tests
 
         driver = new ChromeDriver(options);
         wait = new WebDriverWait(driver, Duration.ofSeconds(10));

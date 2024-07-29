@@ -1,4 +1,5 @@
 package com.userhello.hello.e2e;
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,8 +20,9 @@ public class QuizPageTest {
 
     @BeforeAll
     public static void setUp() {
-        // Setting system properties for WebDriver, assuming ChromeDriver is available in the path specified in the Dockerfile
-        System.setProperty("webdriver.chrome.driver", "/usr/local/bin/chromedriver");
+        // Use WebDriverManager to manage ChromeDriver
+        WebDriverManager.chromedriver().setup();
+
         // Setup Chrome options for running headless
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");  // Ensure it runs in headless mode
