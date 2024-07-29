@@ -26,6 +26,7 @@ public class CombinedE2ETest {
     private static WebDriverWait wait;
     public final static int TIMEOUT = 10;
 
+
     @BeforeAll
     public void setup() {
         ChromeOptions options = new ChromeOptions();
