@@ -10,7 +10,7 @@ check_health() {
 # Function to check container logs
 check_logs() {
   local service=$1
-  docker logs $service | tail -n 10
+  docker logs $service
 }
 
 # Wait for PostgreSQL to be healthy
