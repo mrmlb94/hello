@@ -7,16 +7,35 @@ check_health() {
   echo $status
 }
 
+# Function to check container logs
+check_logs() {
+  local service=$1
+  docker logs $service | tail -n 10
+}
+
+# Wait for PostgreSQL to be healthy
+echo "Waiting for PostgreSQL to be healthy..."
+while [[ "$(check_health hello_postgres_1)" != "healthy" ]]; do
+  current_status=$(check_health hello_postgres_1)
+  echo "PostgreSQL status: $current_status"
+  if [[ "$current_status" == "unhealthy" ]]; then
+    echo "PostgreSQL container is unhealthy. Exiting."
+    check_logs hello_postgres_1
+    exit 1
+  fi
+  sleep 5
+done
+
 # Wait for the webapp service to be healthy
 echo "Waiting for webapp to be healthy..."
 while [[ "$(check_health hello_webapp_1)" != "healthy" ]]; do
   current_status=$(check_health hello_webapp_1)
-  echo "Current status: $current_status"
+  echo "Webapp status: $current_status"
   if [[ "$current_status" == "unhealthy" ]]; then
     echo "Webapp container is unhealthy. Exiting."
+    check_logs hello_webapp_1
     exit 1
   fi
-  docker logs hello_webapp_1 | tail -n 10
   sleep 5
 done
 
