@@ -15,6 +15,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
 
+import static com.userhello.hello.e2e.CombinedE2ETest.TIMEOUT;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -23,19 +24,17 @@ public class LoginPageTest {
     static WebDriverWait wait;
 
     @BeforeAll
-    public static void setUp() {
-        // Use WebDriverManager to manage ChromeDriver
-        WebDriverManager.chromedriver().setup();
-
-        // Setup Chrome options for running headless
+    public void setup() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");  // Ensure it runs in headless mode
-        options.addArguments("--no-sandbox");  // Bypass OS security model, required for Docker
-        options.addArguments("--disable-dev-shm-usage");  // Overcome limited resource problems
-        options.addArguments("--disable-gpu");  // GPU hardware acceleration isn't useful for tests
-
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless");
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        driver.manage().window().maximize();
+        driver.get("https://opensource-demo.orangehrmlive.com/");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(TIMEOUT));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT));
     }
 
     @Test

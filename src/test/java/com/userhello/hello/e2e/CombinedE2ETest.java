@@ -1,7 +1,10 @@
 package com.userhello.hello.e2e;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.junit.jupiter.api.*;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+import java.time.Duration;import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -21,21 +24,20 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CombinedE2ETest {
     private static WebDriver driver;
     private static WebDriverWait wait;
+    public final static int TIMEOUT = 10;
 
     @BeforeAll
-    public static void setUp() {
-        // Use WebDriverManager to manage ChromeDriver
-        WebDriverManager.chromedriver().setup();
-
-        // Setup Chrome options for running headless
+    public void setup() {
         ChromeOptions options = new ChromeOptions();
-        options.addArguments("--headless");  // Ensure it runs in headless mode
-        options.addArguments("--no-sandbox");  // Bypass OS security model, required for Docker
-        options.addArguments("--disable-dev-shm-usage");  // Overcome limited resource problems
-        options.addArguments("--disable-gpu");  // GPU hardware acceleration isn't useful for tests
-
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--headless");
         driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        driver.manage().window().maximize();
+        driver.get("https://opensource-demo.orangehrmlive.com/");
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(TIMEOUT));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(TIMEOUT));
     }
 
     @Test
