@@ -35,7 +35,7 @@ jobs:
       - name: Build and start containers
         run: docker-compose up -d --build
 
-      - name: Wait for webapp and PostgreSQL to be healthy
+      - name: Wait for services to be ready
         run: |
           chmod +x ./monitor_and_test.sh
           ./monitor_and_test.sh
