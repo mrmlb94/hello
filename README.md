@@ -1,82 +1,78 @@
 [![Java CI with Maven](https://github.com/mrmlb94/hello/actions/workflows/maven.yml/badge.svg)](https://github.com/mrmlb94/hello/actions/workflows/maven.yml)[![codecov](https://codecov.io/github/mrmlb94/hello/branch/main/graph/badge.svg?token=UZPZ0UC5J3)](https://codecov.io/github/mrmlb94/hello)
-# Hello Application
-
-This repository contains the source code for the Hello application. 
-This update introduces Docker support for the application, allowing it to be easily deployed and run in a containerized environment.
-
-## Description of Changes
-
-### Summary:
-This update introduces Docker support for the application, allowing it to be easily deployed and run in a containerized environment. 
-The changes include the addition of a `Dockerfile` to build the application image and a `docker-compose.yml` file to manage multi-container Docker applications, including the PostgreSQL database.
-
-### Details of Changes:
-
-1. **Dockerfile Addition:**
-    - A `Dockerfile` was added to create a Docker image for the application.
-    - The Dockerfile uses a multi-stage build process:
-        - **Stage 1**: Uses Maven to build the application from source.
-        - **Stage 2**: Uses an OpenJDK image to run the built application.
-
-2. **Docker Compose Configuration:**
-    - A `docker-compose.yml` file was added to define and run multi-container Docker applications.
-    - It includes two services:
-        - `app`: The application service, built from the Dockerfile.
-        - `db`: The PostgreSQL database service, using the latest PostgreSQL image from Docker Hub.
-
-3. **Application Configuration:**
-    - Updated application properties to use environment variables for database connection details, enhancing flexibility and security.
-
-4. **Docker Hub Deployment:**
-    - Instructions were provided to build, tag, and push the Docker image to Docker Hub.
-    - The Docker image can now be pulled and run on any system with Docker installed, simplifying the deployment process.
-
-5. **Testing and Documentation:**
-    - Added detailed instructions for running the application using Docker in this `README.md` file.
-    - Ensured the end-to-end test (`UserFlowE2ETest`) runs correctly within the Docker environment.
-
-### New/Modified Files:
-
-- **Added**:
-    - `Dockerfile`: Defines the Docker image build process.
-    - `docker-compose.yml`: Defines the multi-container setup for the application and database.
-    - `README.md`: Provides instructions for running the application using Docker.
-
-- **Updated**:
-    - `src/main/resources/application.properties`: Configured to use environment variables for database connection.
-
-## Usage
-
-### Clone the Repository
-```sh
-git clone <repository_url>
-cd <repository_directory>
-```
-
-### Build and Push the Docker Image to Docker Hub
-```sh
-docker build -t mrmlb/hello-app .
-docker push mrmlb/hello-app
-```
-
-1.  Pull and Run the Docker Image on Another Machine
-2.  Ensure Docker and Docker Compose are installed.
-
-Use the provided docker-compose.yml file to start the services:
-
-```sh
-docker-compose pull
-docker-compose up -d
-```
-
-3.  Access the application at http://localhost:8080.
 
 
 
-### To Stop the Application
+# Java Web Application - Quiz Management System
 
-```sh
-docker-compose down
-```
+## Introduction
 
+This project is a Java web application developed as a quiz management system, allowing users to register, log in, create quizzes, and submit quiz responses. It utilizes the Spring framework to provide a robust and flexible environment for enterprise-level applications. The application is designed with scalability, maintainability, and extensibility in mind.
 
+Comprehensive testing, including unit, integration, and end-to-end tests, has been conducted to ensure the application's reliability and functionality. The project also integrates Continuous Integration and Continuous Deployment (CI/CD) using GitHub Actions, with a focus on achieving 100% code coverage using JaCoCo.
+
+## Techniques and Frameworks
+
+### Design Patterns
+
+The application is built using well-known design patterns:
+- **Model-View-Controller (MVC)**: Separates the application into Model, View, and Controller components.
+- **Singleton**: Ensures a class has only one instance, commonly used for managing resources.
+- **Repository**: Abstracts the data access layer, providing a clean API for CRUD operations.
+
+### Transaction Management
+
+The application uses Spring's robust transaction management capabilities, supporting both programmatic and declarative approaches to ensure data integrity and consistency.
+
+### ACID Properties
+
+The application adheres to ACID principles (Atomicity, Consistency, Isolation, Durability) to ensure reliable transaction processing in a database system.
+
+## Running the Application
+
+### Prerequisites
+
+- **Java Development Kit (JDK) 8 or higher**
+- **Apache Maven**
+- **A relational database** (e.g., PostgreSQL)
+
+### Steps to Run
+
+1. **Clone the Repository**:
+    ```bash
+    git clone https://github.com/mrmlb94/hello
+    cd hello
+    ```
+
+2. **Run the Application using Docker**:
+    - Build the Docker images and start the containers using Docker Compose:
+        ```bash
+        docker-compose --build
+        docker-compose up
+        ```
+
+3. **Access the Application**:
+    - Open a web browser and navigate to `http://localhost:8080`.
+
+## Testing
+
+The application includes two testing profiles:
+
+1. **Unit and Integration Tests**:
+    - Use the `skip-e2e-tests` profile to run only unit and integration tests:
+        ```bash
+        mvn test -P skip-e2e-tests
+        ```
+
+2. **End-to-End Tests**:
+    - To run all 76 E2E tests, use the default profile:
+        ```bash
+        mvn test
+        ```
+
+## CI/CD and Code Quality
+
+The project is integrated with GitHub Actions for CI/CD, ensuring automated builds, tests, and deployments. The code quality is monitored with SonarCloud, achieving 100% code coverage and 0 technical debt.
+
+## Conclusion
+
+This project demonstrates best practices in software development, combining a solid architectural foundation with rigorous testing and automated deployment strategies. It serves as a reliable, scalable, and maintainable solution for enterprise-level applications.
