@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-public class WebControllerTest {
+class WebControllerTest {
 
     @Mock
     private UserService userService;
@@ -38,49 +38,50 @@ public class WebControllerTest {
     private WebController webController;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.openMocks(this);
-        webController = new WebController(userService);
-        webController.userRepository = userRepository; // Manually inject the mock
+        webController = new WebController(userService, userRepository);
     }
 
     @Test
-    public void testShowLogin() {
+    void testShowLogin() {
         String viewName = webController.showLogin(model);
         assertEquals("login", viewName);
         verify(model).addAttribute(eq("user"), any(User.class));
     }
 
     @Test
-    public void testShowSignupForm() {
+    void testShowSignupForm() {
         String viewName = webController.showSignupForm(model);
         assertEquals("signup", viewName);
         verify(model).addAttribute(eq("user"), any(User.class));
     }
 
     @Test
-    public void testSignUp_Success() {
+    void testSignUp_Success() {
         User user = new User();
         user.setName("John");
-        when(userService.signUp(user)).thenReturn(user);
+        when(userService.signUp(any(User.class))).thenReturn(user);
 
+        // Corrected the method call to include the model
         String viewName = webController.signUp(user, model);
         assertEquals("welcome", viewName);
         verify(model).addAttribute("name", "John");
     }
 
     @Test
-    public void testSignUp_Failure() {
+    void testSignUp_Failure() {
         User user = new User();
-        when(userService.signUp(user)).thenThrow(new RuntimeException("Error"));
+        when(userService.signUp(any(User.class))).thenThrow(new RuntimeException("Error"));
 
+        // Corrected the method call to include the model
         String viewName = webController.signUp(user, model);
         assertEquals("signup", viewName);
         verify(model).addAttribute("error", "Error");
     }
 
     @Test
-    public void testLogin_Success() {
+    void testLogin_Success() {
         User user = new User();
         user.setId(1L);
         user.setUname("john");
@@ -96,7 +97,7 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testLogin_Failure() {
+    void testLogin_Failure() {
         when(userService.findByUname("john")).thenReturn(Optional.empty());
 
         String viewName = webController.login("john", model, session);
@@ -105,7 +106,7 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testWelcomePage_LoggedIn() {
+    void testWelcomePage_LoggedIn() {
         User user = new User();
         user.setName("John");
 
@@ -118,7 +119,7 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testWelcomePage_NotLoggedIn() {
+    void testWelcomePage_NotLoggedIn() {
         when(session.getAttribute("userId")).thenReturn(null);
 
         String viewName = webController.welcomePage(model, session);
@@ -126,7 +127,7 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testWelcomePage_UserNotFound() {
+    void testWelcomePage_UserNotFound() {
         when(session.getAttribute("userId")).thenReturn(1L);
         when(userService.findById(1L)).thenReturn(Optional.empty());
 
@@ -135,13 +136,13 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testShowLoginPage() {
+    void testShowLoginPage() {
         String viewName = webController.showLoginPage();
         assertEquals("login", viewName);
     }
 
     @Test
-    public void testListUsers_NoSort() {
+    void testListUsers_NoSort() {
         List<User> users = new ArrayList<>();
         when(userService.findAllUsers()).thenReturn(users);
 
@@ -151,7 +152,7 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testListUsers_SortByName() {
+    void testListUsers_SortByName() {
         List<User> users = new ArrayList<>();
         when(userService.findAllUsersSortedByName()).thenReturn(users);
 
@@ -161,7 +162,7 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testEditUserForm() {
+    void testEditUserForm() {
         User user = new User();
         when(userService.findById(1L)).thenReturn(Optional.of(user));
 
@@ -171,7 +172,7 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testEditUserForm_UserNotFound() {
+    void testEditUserForm_UserNotFound() {
         when(userService.findById(1L)).thenReturn(Optional.empty());
 
         try {
@@ -182,35 +183,35 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testUpdateUser() {
+    void testUpdateUser() {
         User user = new User();
         when(userService.updateUser(user)).thenReturn(user);
 
-        String viewName = webController.updateUser(1L, user, model);
+        String viewName = webController.updateUser(1L, user);
         assertEquals("redirect:/users", viewName);
     }
 
     @Test
-    public void testDeleteUser() {
+    void testDeleteUser() {
         String viewName = webController.deleteUser(1L);
         assertEquals("redirect:/users", viewName);
         verify(userService).deleteUser(1L);
     }
 
     @Test
-    public void testQuizPage() {
+    void testQuizPage() {
         String viewName = webController.quizPage();
         assertEquals("quiz", viewName);
     }
 
     @Test
-    public void testSubmitQuiz() {
+    void testSubmitQuiz() {
         ResponseEntity<String> response = webController.submitQuiz(100);
         assertEquals("Score submitted successfully. Your score: 100", response.getBody());
     }
 
     @Test
-    public void testLogout() {
+    void testLogout() {
         String viewName = webController.logout(session);
         assertEquals("redirect:/login", viewName);
         verify(session).removeAttribute("userId");
@@ -218,24 +219,24 @@ public class WebControllerTest {
     }
 
     @Test
-    public void testDirectSignUp_Success() {
+    void testDirectSignUp_Success() {
         User user = new User();
         user.setUname("john");
         when(userRepository.findByUname("john")).thenReturn(Optional.empty());
 
-        webController.signUp(user);
+        webController.signUp(user, model);
 
         verify(userRepository).save(user);
     }
 
     @Test
-    public void testDirectSignUp_UsernameExists() {
+    void testDirectSignUp_UsernameExists() {
         User user = new User();
         user.setUname("john");
         when(userRepository.findByUname("john")).thenReturn(Optional.of(user));
 
         RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-            webController.signUp(user);
+            webController.signUp(user, model);
         });
 
         assertEquals("Username already exists", exception.getMessage());
