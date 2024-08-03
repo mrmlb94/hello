@@ -1,4 +1,4 @@
-package com.userhello.hello.unit.Service;
+package com.userhello.hello.unit;
 
 import com.userhello.hello.model.QuizSubmission;
 import org.junit.jupiter.api.Test;
