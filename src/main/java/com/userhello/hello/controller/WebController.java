@@ -43,12 +43,16 @@ public class WebController {
     @PostMapping("/signup")
     public String signUp(User user, Model model) {
         try {
-            User savedUser = userService.signUp(user);
+            Optional<User> existingUser = userRepository.findByUname(user.getUname());
+            if (existingUser.isPresent()) {
+                throw new RuntimeException("Username already exists");
+            }
+            User savedUser = userRepository.save(user);
             model.addAttribute("name", savedUser.getName());
-            return WELCOME_VIEW;
-        } catch (UsernameAlreadyExistsException e) {
+            return "welcome";
+        } catch (RuntimeException e) {
             model.addAttribute("error", e.getMessage());
-            return "signup"; // Redirect back to signup page with error message
+            return "signup";
         }
     }
 
@@ -57,11 +61,11 @@ public class WebController {
         Optional<User> userOptional = userService.findByUname(uname);
         if (userOptional.isEmpty()) {
             model.addAttribute("error", "Username not found. Please sign up.");
-            return LOGIN_VIEW; // Stay on login page and show error
+            return LOGIN_VIEW;
         }
         User user = userOptional.get();
-        session.setAttribute(USER_ID_ATTR, user.getId()); // Storing user ID in session for tracking
-        session.setAttribute("username", user.getUname()); // Storing username in session
+        session.setAttribute(USER_ID_ATTR, user.getId());
+        session.setAttribute("username", user.getUname());
         model.addAttribute("name", user.getName());
         return WELCOME_VIEW;
     }
@@ -70,14 +74,14 @@ public class WebController {
     public String welcomePage(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute(USER_ID_ATTR);
         if (userId == null) {
-            return REDIRECT_LOGIN;  // Redirect to log in if no user is logged in
+            return REDIRECT_LOGIN;
         }
         Optional<User> user = userService.findById(userId);
         if (user.isEmpty()) {
-            return REDIRECT_LOGIN;  // Redirect to log in if user is not found
+            return REDIRECT_LOGIN;
         }
         model.addAttribute("name", user.get().getName());
-        return WELCOME_VIEW;  // Ensure that a 'welcome.html' view exists
+        return WELCOME_VIEW;
     }
 
     @GetMapping("/login")
@@ -106,7 +110,7 @@ public class WebController {
 
     @PostMapping("/editUser/{id}")
     public String updateUser(@PathVariable Long id, @ModelAttribute User updatedUser) {
-        userService.updateUser(updatedUser); // Assumes updateUser handles finding and saving
+        userService.updateUser(updatedUser);
         return "redirect:/users";
     }
 
@@ -123,21 +127,13 @@ public class WebController {
 
     @PostMapping("/submitQuiz")
     public ResponseEntity<String> submitQuiz(@RequestParam("score") int score) {
-        // This should be handled correctly by your quiz service
         return ResponseEntity.ok("Score submitted successfully. Your score: " + score);
     }
 
     @GetMapping("/logout")
     public String logout(HttpSession session) {
-        session.removeAttribute(USER_ID_ATTR); // Remove specific attribute
-        session.removeAttribute("username"); // Ensure username is also removed
-        return REDIRECT_LOGIN; // Redirect to login page
-    }
-
-    // Define a dedicated exception class
-    class UsernameAlreadyExistsException extends RuntimeException {
-        public UsernameAlreadyExistsException(String message) {
-            super(message);
-        }
+        session.removeAttribute(USER_ID_ATTR);
+        session.removeAttribute("username");
+        return REDIRECT_LOGIN;
     }
 }
