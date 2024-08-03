@@ -33,9 +33,31 @@ public class UserServiceTest {
 
     @BeforeEach
     void setUp() {
-        john = new User(1L, "John", "johnny", "Doe", null, null, null, null, null, null, null, "john.doe@example.com");
-        alice = new User(2L, "Alice", "alice", "Wonder", null, null, null, null, null, null, null, "alice.wonder@example.com");
-        bob = new User(3L, "Bob", "bobby", "Builder", null, null, null, null, null, null, null, "bob.builder@example.com");
+
+        User john = new User.Builder()
+                .setId(1L)
+                .setName("John")
+                .setUname("johnny")
+                .setFamilyName("Doe")
+                .setEmail("john.doe@example.com")
+                .build();
+
+        User alice = new User.Builder()
+                .setId(2L)
+                .setName("Alice")
+                .setUname("alice")
+                .setFamilyName("Wonder")
+                .setEmail("alice.wonder@example.com")
+                .build();
+
+        User bob = new User.Builder()
+                .setId(3L)
+                .setName("Bob")
+                .setUname("bobby")
+                .setFamilyName("Builder")
+                .setEmail("bob.builder@example.com")
+                .build();
+
     }
 
     @Test
