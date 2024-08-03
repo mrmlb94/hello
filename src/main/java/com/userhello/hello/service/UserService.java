@@ -1,7 +1,7 @@
 package com.userhello.hello.service;
 
-import com.userhello.hello.repository.UserRepository;
 import com.userhello.hello.model.User;
+import com.userhello.hello.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,7 +24,6 @@ public class UserService {
         return userRepository.save(user);
     }
 
-
     public List<User> findByName(String name) {
         return userRepository.findByName(name);
     }
@@ -36,6 +35,7 @@ public class UserService {
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
     }
+
     public Optional<User> findByUname(String uname) {
         return userRepository.findByUname(uname);
     }
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     public List<User> findAllUsers() {
-        return (List<User>) userRepository.findAll();
+        return userRepository.findAll(); // Removed unnecessary cast
     }
 
     public List<User> findAllUsersSortedByName() {
@@ -53,10 +53,14 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return (List<User>) userRepository.findAll();
+        return userRepository.findAll(); // Removed unnecessary cast
     }
 
-    public User createUser(User user) {return userRepository.save(user); }
+    public User createUser(User user) {
+        return userRepository.save(user);
+    }
 
-    public User getUserById(Long id) {return userRepository.findById(id).orElse(null); }
+    public User getUserById(Long id) {
+        return userRepository.findById(id).orElse(null);
+    }
 }
