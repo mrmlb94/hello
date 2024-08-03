@@ -1,7 +1,7 @@
 package com.userhello.hello.controller;
 
 import com.userhello.hello.model.User;
-import com.userhello.hello.Service.UserService;
+import com.userhello.hello.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

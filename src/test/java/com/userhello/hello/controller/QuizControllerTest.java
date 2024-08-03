@@ -1,6 +1,6 @@
 package com.userhello.hello.controller;
 
-import com.userhello.hello.Service.QuizService;
+import com.userhello.hello.service.QuizService;
 import com.userhello.hello.model.QuizResult;
 import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;

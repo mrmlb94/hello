@@ -1,6 +1,6 @@
 package com.userhello.hello.integration;
 
-import com.userhello.hello.Service.UserService;
+import com.userhello.hello.service.UserService;
 import com.userhello.hello.model.User;
 import com.userhello.hello.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;

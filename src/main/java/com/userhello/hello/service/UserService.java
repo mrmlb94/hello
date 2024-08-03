@@ -1,4 +1,4 @@
-package com.userhello.hello.Service;
+package com.userhello.hello.service;
 
 import com.userhello.hello.repository.UserRepository;
 import com.userhello.hello.model.User;
