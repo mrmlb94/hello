@@ -1,11 +1,16 @@
 package com.userhello.hello;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SpringBootApplication
 public class HelloApplication implements CommandLineRunner {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(HelloApplication.class);
 
 	@Value("${spring.datasource.url}")
 	private String datasourceUrl;
@@ -22,8 +27,8 @@ public class HelloApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		System.out.println("Datasource URL: " + datasourceUrl);
-		System.out.println("Datasource Username: " + datasourceUsername);
-		System.out.println("Datasource Password: " + datasourcePassword);
+		LOGGER.info("Datasource URL: {}", datasourceUrl);
+		LOGGER.info("Datasource Username: {}", datasourceUsername);
+		LOGGER.info("Datasource Password: [PROTECTED]");
 	}
 }
