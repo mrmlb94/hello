@@ -2,13 +2,10 @@ package com.userhello.hello.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.userhello.hello.model.User;
-import com.userhello.hello.Service.UserService;
+import com.userhello.hello.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;

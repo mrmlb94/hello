@@ -1,9 +1,8 @@
 package com.userhello.hello.controller;
 
-import com.userhello.hello.Service.QuizService;
+import com.userhello.hello.service.QuizService;
 import com.userhello.hello.model.QuizResult;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,8 +12,13 @@ import java.util.Date;
 @RestController
 @RequestMapping("/api")
 public class QuizController {
-    @Autowired
-    private QuizService quizService;
+
+    private final QuizService quizService;
+
+    // Constructor injection
+    public QuizController(QuizService quizService) {
+        this.quizService = quizService;
+    }
 
     @PostMapping("/submitQuiz")
     public ResponseEntity<?> submitQuiz(@RequestBody QuizResult submission, HttpSession session) {

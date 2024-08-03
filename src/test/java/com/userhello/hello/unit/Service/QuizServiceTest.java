@@ -1,6 +1,6 @@
 package com.userhello.hello.unit.Service;
 
-import com.userhello.hello.Service.QuizService;
+import com.userhello.hello.service.QuizService;
 import com.userhello.hello.model.QuizResult;
 import com.userhello.hello.repository.QuizResultRepository;
 import org.junit.jupiter.api.Test;
