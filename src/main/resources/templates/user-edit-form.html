@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Edit User</title>
@@ -10,28 +10,23 @@
             margin: 20px;
             padding: 20px;
         }
-
         h2 {
             color: #333;
         }
-
         form {
             background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
         div {
             margin-bottom: 10px;
         }
-
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
         }
-
         input[type="text"],
         input[type="email"],
         input[type="date"] {
@@ -41,7 +36,6 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
-
         button {
             background-color: #5C6BC0;
             color: white;
@@ -50,7 +44,6 @@
             border-radius: 4px;
             cursor: pointer;
         }
-
         button:hover {
             background-color: #3F51B5;
         }
@@ -58,10 +51,8 @@
 </head>
 <body>
 <h2>Edit User Details</h2>
-
 <form th:action="@{/editUser/{id}(id=${user.id})}" th:object="${user}" method="post">
     <input type="hidden" th:field="*{id}" />
-
     <!-- Include all user-editable fields -->
     <div><label>Name:</label><input type="text" th:field="*{name}" /></div>
     <div><label>Family Name:</label><input type="text" th:field="*{familyName}" /></div>
@@ -73,7 +64,6 @@
     <div><label>School Name:</label><input type="text" th:field="*{schoolName}" /></div>
     <div><label>GPA:</label><input type="text" th:field="*{gpa}" /></div>
     <div><label>Phone:</label><input type="text" th:field="*{phone}" /></div>
-
     <button type="submit">Update</button>
 </form>
 </body>
