@@ -39,19 +39,19 @@ public class User {
         this.uname = uname;
     }
 
-    public User(Long id, String name, String uname, String familyName, Date birthdate, String birthPlace, String currentCountry, String currentCity, String schoolName, Float gpa, String phone, String email) {
-        this.id = id;
-        this.name = name;
-        this.uname = uname;
-        this.familyName = familyName;
-        this.birthdate = birthdate;
-        this.birthPlace = birthPlace;
-        this.currentCountry = currentCountry;
-        this.currentCity = currentCity;
-        this.schoolName = schoolName;
-        this.gpa = gpa;
-        this.phone = phone;
-        this.email = email;
+    private User(Builder builder) {
+        this.id = builder.id;
+        this.name = builder.name;
+        this.uname = builder.uname;
+        this.familyName = builder.familyName;
+        this.birthdate = builder.birthdate;
+        this.birthPlace = builder.birthPlace;
+        this.currentCountry = builder.currentCountry;
+        this.currentCity = builder.currentCity;
+        this.schoolName = builder.schoolName;
+        this.gpa = builder.gpa;
+        this.phone = builder.phone;
+        this.email = builder.email;
     }
 
     // Getters and Setters
@@ -79,4 +79,83 @@ public class User {
     public void setPhone(String phone) { this.phone = phone; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public static class Builder {
+        private Long id;
+        private String name;
+        private String uname;
+        private String familyName;
+        private Date birthdate;
+        private String birthPlace;
+        private String currentCountry;
+        private String currentCity;
+        private String schoolName;
+        private Float gpa;
+        private String phone;
+        private String email;
+
+        public Builder setId(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setUname(String uname) {
+            this.uname = uname;
+            return this;
+        }
+
+        public Builder setFamilyName(String familyName) {
+            this.familyName = familyName;
+            return this;
+        }
+
+        public Builder setBirthdate(Date birthdate) {
+            this.birthdate = birthdate;
+            return this;
+        }
+
+        public Builder setBirthPlace(String birthPlace) {
+            this.birthPlace = birthPlace;
+            return this;
+        }
+
+        public Builder setCurrentCountry(String currentCountry) {
+            this.currentCountry = currentCountry;
+            return this;
+        }
+
+        public Builder setCurrentCity(String currentCity) {
+            this.currentCity = currentCity;
+            return this;
+        }
+
+        public Builder setSchoolName(String schoolName) {
+            this.schoolName = schoolName;
+            return this;
+        }
+
+        public Builder setGpa(Float gpa) {
+            this.gpa = gpa;
+            return this;
+        }
+
+        public Builder setPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder setEmail(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
+    }
 }

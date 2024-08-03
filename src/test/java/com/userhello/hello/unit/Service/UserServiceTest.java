@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
+class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
@@ -27,7 +27,7 @@ public class UserServiceTest {
 
     @Test
     void testSignUpSuccess() {
-        User newUser = new User("newuser");
+        User newUser = new User.Builder().setUname("newuser").build();
         when(userRepository.findByUname("newuser")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
@@ -39,7 +39,7 @@ public class UserServiceTest {
 
     @Test
     void testSignUpFailure() {
-        User newUser = new User("existinguser");
+        User newUser = new User.Builder().setUname("existinguser").build();
         when(userRepository.findByUname("existinguser")).thenReturn(Optional.of(newUser));
 
         Exception exception = assertThrows(RuntimeException.class, () -> {
@@ -51,7 +51,15 @@ public class UserServiceTest {
 
     @Test
     void testFindById() {
-        Optional<User> foundUser = Optional.of(new User(1L, "John", "johnny", "Doe", null, null, null, null, null, null, null, "john.doe@example.com"));
+        User user = new User.Builder()
+                .setId(1L)
+                .setName("John")
+                .setUname("johnny")
+                .setFamilyName("Doe")
+                .setEmail("john.doe@example.com")
+                .build();
+
+        Optional<User> foundUser = Optional.of(user);
         when(userRepository.findById(1L)).thenReturn(foundUser);
 
         Optional<User> result = userService.findById(1L);
@@ -70,7 +78,14 @@ public class UserServiceTest {
 
     @Test
     void testUpdateUser() {
-        User user = new User(1L, "John", "johnny", "Doe", null, null, null, null, null, null, null, "john.doe@example.com");
+        User user = new User.Builder()
+                .setId(1L)
+                .setName("John")
+                .setUname("johnny")
+                .setFamilyName("Doe")
+                .setEmail("john.doe@example.com")
+                .build();
+
         when(userRepository.save(user)).thenReturn(user);
 
         User updatedUser = userService.updateUser(user);
@@ -82,7 +97,10 @@ public class UserServiceTest {
 
     @Test
     void testFindAllUsers() {
-        List<User> userList = Arrays.asList(new User("user1"), new User("user2"));
+        List<User> userList = Arrays.asList(
+                new User.Builder().setUname("user1").build(),
+                new User.Builder().setUname("user2").build()
+        );
         when(userRepository.findAll()).thenReturn(userList);
 
         List<User> users = userService.findAllUsers();
@@ -93,7 +111,10 @@ public class UserServiceTest {
 
     @Test
     void testFindAllUsersSortedByName() {
-        List<User> userList = Arrays.asList(new User("user1"), new User("user2"));
+        List<User> userList = Arrays.asList(
+                new User.Builder().setUname("user1").build(),
+                new User.Builder().setUname("user2").build()
+        );
         when(userRepository.findAllByOrderByNameAsc()).thenReturn(userList);
 
         List<User> users = userService.findAllUsersSortedByName();
