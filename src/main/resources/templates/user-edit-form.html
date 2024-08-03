@@ -54,16 +54,46 @@
 <form th:action="@{/editUser/{id}(id=${user.id})}" th:object="${user}" method="post">
     <input type="hidden" th:field="*{id}" />
     <!-- Include all user-editable fields -->
-    <div><label>Name:</label><input type="text" th:field="*{name}" /></div>
-    <div><label>Family Name:</label><input type="text" th:field="*{familyName}" /></div>
-    <div><label>Email:</label><input type="email" th:field="*{email}" /></div>
-    <div><label>Birthdate:</label><input type="date" th:field="*{birthdate}" /></div>
-    <div><label>Birth Place:</label><input type="text" th:field="*{birthPlace}" /></div>
-    <div><label>Current Country:</label><input type="text" th:field="*{currentCountry}" /></div>
-    <div><label>Current City:</label><input type="text" th:field="*{currentCity}" /></div>
-    <div><label>School Name:</label><input type="text" th:field="*{schoolName}" /></div>
-    <div><label>GPA:</label><input type="text" th:field="*{gpa}" /></div>
-    <div><label>Phone:</label><input type="text" th:field="*{phone}" /></div>
+    <div>
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" />
+    </div>
+    <div>
+        <label for="familyName">Family Name:</label>
+        <input type="text" id="familyName" th:field="*{familyName}" />
+    </div>
+    <div>
+        <label for="email">Email:</label>
+        <input type="email" id="email" th:field="*{email}" />
+    </div>
+    <div>
+        <label for="birthdate">Birthdate:</label>
+        <input type="date" id="birthdate" th:field="*{birthdate}" />
+    </div>
+    <div>
+        <label for="birthPlace">Birth Place:</label>
+        <input type="text" id="birthPlace" th:field="*{birthPlace}" />
+    </div>
+    <div>
+        <label for="currentCountry">Current Country:</label>
+        <input type="text" id="currentCountry" th:field="*{currentCountry}" />
+    </div>
+    <div>
+        <label for="currentCity">Current City:</label>
+        <input type="text" id="currentCity" th:field="*{currentCity}" />
+    </div>
+    <div>
+        <label for="schoolName">School Name:</label>
+        <input type="text" id="schoolName" th:field="*{schoolName}" />
+    </div>
+    <div>
+        <label for="gpa">GPA:</label>
+        <input type="text" id="gpa" th:field="*{gpa}" />
+    </div>
+    <div>
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" th:field="*{phone}" />
+    </div>
     <button type="submit">Update</button>
 </form>
 </body>
