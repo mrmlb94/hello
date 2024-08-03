@@ -18,7 +18,7 @@ import java.util.Date;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class QuizControllerTest {
+class QuizControllerTest {
 
     @Mock
     private QuizService quizService;
@@ -38,7 +38,7 @@ public class QuizControllerTest {
     }
 
     @Test
-    public void testSubmitQuiz_UserNotLoggedIn() {
+    void testSubmitQuiz_UserNotLoggedIn() {
         // Set up
         when(session.getAttribute("username")).thenReturn(null);
         QuizResult submission = new QuizResult();
@@ -52,7 +52,7 @@ public class QuizControllerTest {
     }
 
     @Test
-    public void testSubmitQuiz_UserLoggedIn() {
+    void testSubmitQuiz_UserLoggedIn() {
         // Set up
         String username = "testUser";
         when(session.getAttribute("username")).thenReturn(username);

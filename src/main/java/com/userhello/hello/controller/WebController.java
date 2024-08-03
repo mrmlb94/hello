@@ -3,6 +3,7 @@ package com.userhello.hello.controller;
 import com.userhello.hello.service.UserService;
 import com.userhello.hello.model.User;
 import com.userhello.hello.repository.UserRepository;
+import com.userhello.hello.exception.UsernameAlreadyExistsException;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,7 +15,6 @@ import java.util.Optional;
 
 @Controller
 public class WebController {
-
     private static final String LOGIN_VIEW = "login";
     private static final String WELCOME_VIEW = "welcome";
     private static final String USER_ID_ATTR = "userId";
@@ -45,12 +45,12 @@ public class WebController {
         try {
             Optional<User> existingUser = userRepository.findByUname(user.getUname());
             if (existingUser.isPresent()) {
-                throw new RuntimeException("Username already exists");
+                throw new UsernameAlreadyExistsException("Username already exists");
             }
             User savedUser = userRepository.save(user);
             model.addAttribute("name", savedUser.getName());
-            return "welcome";
-        } catch (RuntimeException e) {
+            return WELCOME_VIEW; // Use the constant here
+        } catch (UsernameAlreadyExistsException e) {
             model.addAttribute("error", e.getMessage());
             return "signup";
         }
