@@ -7,16 +7,16 @@ import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class QuizResultTest {
+class QuizResultTest {
 
     @Test
-    public void testDefaultConstructor() {
+    void testDefaultConstructor() {
         QuizResult quizResult = new QuizResult();
         assertNotNull(quizResult.getTimestamp(), "Timestamp should be initialized");
     }
 
     @Test
-    public void testParameterizedConstructor() {
+    void testParameterizedConstructor() {
         String username = "testUser";
         int score = 85;
         QuizResult quizResult = new QuizResult(username, score);
@@ -27,7 +27,7 @@ public class QuizResultTest {
     }
 
     @Test
-    public void testGetId() {
+    void testGetId() {
         QuizResult quizResult = new QuizResult();
         Long id = 1L;
         quizResult.setId(id);
@@ -36,16 +36,16 @@ public class QuizResultTest {
     }
 
     @Test
-    public void testSetId() {
+    void testSetId() {
         QuizResult quizResult = new QuizResult();
-        Long id = 1L;
+        Long id = 2L; // Different value from testGetId
         quizResult.setId(id);
 
         assertEquals(id, quizResult.getId(), "Id should be set correctly");
     }
 
     @Test
-    public void testGetUsername() {
+    void testGetUsername() {
         QuizResult quizResult = new QuizResult();
         String username = "testUser";
         quizResult.setUsername(username);
@@ -54,16 +54,16 @@ public class QuizResultTest {
     }
 
     @Test
-    public void testSetUsername() {
+    void testSetUsername() {
         QuizResult quizResult = new QuizResult();
-        String username = "testUser";
+        String username = "anotherUser"; // Different value from testGetUsername
         quizResult.setUsername(username);
 
         assertEquals(username, quizResult.getUsername(), "Username should be set correctly");
     }
 
     @Test
-    public void testGetScore() {
+    void testGetScore() {
         QuizResult quizResult = new QuizResult();
         int score = 85;
         quizResult.setScore(score);
@@ -72,16 +72,16 @@ public class QuizResultTest {
     }
 
     @Test
-    public void testSetScore() {
+    void testSetScore() {
         QuizResult quizResult = new QuizResult();
-        int score = 85;
+        int score = 90; // Different value from testGetScore
         quizResult.setScore(score);
 
         assertEquals(score, quizResult.getScore(), "Score should be set correctly");
     }
 
     @Test
-    public void testGetTimestamp() {
+    void testGetTimestamp() {
         QuizResult quizResult = new QuizResult();
         Date timestamp = new Date();
         quizResult.setTimestamp(timestamp);
@@ -90,7 +90,7 @@ public class QuizResultTest {
     }
 
     @Test
-    public void testSetTimestamp() {
+    void testSetTimestamp() {
         QuizResult quizResult = new QuizResult();
         Date timestamp = new Date();
         quizResult.setTimestamp(timestamp);
