@@ -1,4 +1,4 @@
-package com.userhello.hello.unit.Service;
+package com.userhello.hello.unit;
 
 import com.userhello.hello.service.QuizService;
 import com.userhello.hello.model.QuizResult;
