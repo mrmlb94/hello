@@ -10,16 +10,16 @@ import org.slf4j.LoggerFactory;
 @SpringBootApplication
 public class HelloApplication implements CommandLineRunner {
 
-	static Logger LOGGER = LoggerFactory.getLogger(HelloApplication.class);
+	static Logger logger = LoggerFactory.getLogger(HelloApplication.class);
 
 	@Value("${spring.datasource.url}")
-    String datasourceUrl;
+	String datasourceUrl;
 
 	@Value("${spring.datasource.username}")
-    String datasourceUsername;
+	String datasourceUsername;
 
 	@Value("${spring.datasource.password}")
-    String datasourcePassword;
+	String datasourcePassword;
 
 	public static void main(String[] args) {
 		SpringApplication.run(HelloApplication.class, args);
@@ -27,8 +27,8 @@ public class HelloApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		LOGGER.info("Datasource URL: {}", datasourceUrl);
-		LOGGER.info("Datasource Username: {}", datasourceUsername);
-		LOGGER.info("Datasource Password: [PROTECTED]");
+		logger.info("Datasource URL: {}", datasourceUrl);
+		logger.info("Datasource Username: {}", datasourceUsername);
+		logger.info("Datasource Password: [PROTECTED]");
 	}
 }
