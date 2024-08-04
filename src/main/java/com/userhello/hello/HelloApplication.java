@@ -10,16 +10,16 @@ import org.slf4j.LoggerFactory;
 @SpringBootApplication
 public class HelloApplication implements CommandLineRunner {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(HelloApplication.class);
+	static Logger LOGGER = LoggerFactory.getLogger(HelloApplication.class);
 
 	@Value("${spring.datasource.url}")
-	private String datasourceUrl;
+    String datasourceUrl;
 
 	@Value("${spring.datasource.username}")
-	private String datasourceUsername;
+    String datasourceUsername;
 
 	@Value("${spring.datasource.password}")
-	private String datasourcePassword;
+    String datasourcePassword;
 
 	public static void main(String[] args) {
 		SpringApplication.run(HelloApplication.class, args);
