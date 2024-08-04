@@ -185,7 +185,7 @@
 			<version>7.10.2</version>
 			<scope>test</scope>
 		</dependency>
-		</dependencies>
+	</dependencies>
 
 
 	<build>
@@ -200,7 +200,6 @@
 					</includes>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -218,14 +217,12 @@
 						</goals>
 						<configuration>
 							<excludes>
-								<exclude>jdk/internal/**</exclude>
 								<exclude>**/HelloApplication.main(String[])</exclude>
 							</excludes>
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

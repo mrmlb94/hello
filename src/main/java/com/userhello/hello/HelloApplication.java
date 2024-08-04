@@ -21,6 +21,7 @@ public class HelloApplication implements CommandLineRunner {
 	@Value("${spring.datasource.password}")
 	String datasourcePassword;
 
+	@Generated // Custom annotation to exclude from JaCoCo coverage
 	public static void main(String[] args) {
 		SpringApplication.run(HelloApplication.class, args);
 	}
