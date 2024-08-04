@@ -9,8 +9,7 @@
 [![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
 [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
-[![Java CI with Maven](https://github.com/mrmlb94/hello/actions/workflows/maven.yml/badge.svg)](https://github.com/mrmlb94/hello/actions/workflows/maven.yml)
-[![codecov](https://codecov.io/github/mrmlb94/hello/branch/main/graph/badge.svg?token=UZPZ0UC5J3)](https://codecov.io/github/mrmlb94/hello)
+[![Java CI with Maven](https://github.com/mrmlb94/hello/actions/workflows/maven.yml/badge.svg)](https://github.com/mrmlb94/hello/actions/workflows/maven.yml)[![codecov](https://codecov.io/github/mrmlb94/hello/branch/main/graph/badge.svg?token=UZPZ0UC5J3)](https://codecov.io/github/mrmlb94/hello)
 
 
 
