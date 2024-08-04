@@ -1,5 +1,6 @@
 package com.userhello.hello.service;
 
+import com.userhello.hello.exception.UsernameAlreadyExistsException;
 import com.userhello.hello.model.User;
 import com.userhello.hello.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class UserService {
     public User signUp(User user) {
         Optional<User> existingUser = userRepository.findByUname(user.getUname());
         if (existingUser.isPresent()) {
-            throw new RuntimeException("Username already exists");
+            throw new UsernameAlreadyExistsException("Username already exists");
         }
         return userRepository.save(user);
     }
@@ -45,7 +46,7 @@ public class UserService {
     }
 
     public List<User> findAllUsers() {
-        return userRepository.findAll(); // Removed unnecessary cast
+        return userRepository.findAll();
     }
 
     public List<User> findAllUsersSortedByName() {
@@ -53,7 +54,7 @@ public class UserService {
     }
 
     public List<User> getAllUsers() {
-        return userRepository.findAll(); // Removed unnecessary cast
+        return userRepository.findAll();
     }
 
     public User createUser(User user) {
