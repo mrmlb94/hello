@@ -82,19 +82,29 @@ class QuizResultTest {
 
     @Test
     void testGetTimestamp() {
+        // Arrange
         QuizResult quizResult = new QuizResult();
         Date timestamp = new Date();
+
+        // Act
         quizResult.setTimestamp(timestamp);
 
+        // Assert
         assertEquals(timestamp, quizResult.getTimestamp(), "Timestamp should be set correctly");
     }
 
     @Test
     void testSetTimestamp() {
+        // Arrange
         QuizResult quizResult = new QuizResult();
-        Date timestamp = new Date();
-        quizResult.setTimestamp(timestamp);
+        Date timestamp1 = new Date();
+        Date timestamp2 = new Date(timestamp1.getTime() + 1000); // A different timestamp
 
-        assertEquals(timestamp, quizResult.getTimestamp(), "Timestamp should be set correctly");
+        // Act
+        quizResult.setTimestamp(timestamp1);
+        quizResult.setTimestamp(timestamp2);
+
+        // Assert
+        assertEquals(timestamp2, quizResult.getTimestamp(), "Timestamp should be updated correctly");
     }
 }
