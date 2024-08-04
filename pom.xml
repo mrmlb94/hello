@@ -219,6 +219,7 @@
 						<configuration>
 							<excludes>
 								<exclude>jdk/internal/**</exclude>
+								<exclude>com/userhello/hello/HelloApplication.main(String[])</exclude>
 							</excludes>
 						</configuration>
 					</execution>
