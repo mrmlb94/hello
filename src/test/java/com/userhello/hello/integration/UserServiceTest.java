@@ -1,5 +1,6 @@
 package com.userhello.hello.integration;
 
+import com.userhello.hello.exception.UsernameAlreadyExistsException;
 import com.userhello.hello.model.User;
 import com.userhello.hello.repository.UserRepository;
 import com.userhello.hello.service.UserService;
@@ -71,8 +72,19 @@ class UserServiceTest {
         verify(userRepository).save(newUser);
     }
 
+    @Test
+    void testSignUpUsernameAlreadyExists() {
+        User existingUser = new User.Builder().setUname("existingUser").build();
+        when(userRepository.findByUname("existingUser")).thenReturn(Optional.of(existingUser));
 
+        UsernameAlreadyExistsException exception = assertThrows(
+                UsernameAlreadyExistsException.class,
+                () -> userService.signUp(existingUser)
+        );
 
+        assertEquals("Username already exists", exception.getMessage());
+        verify(userRepository, never()).save(existingUser);
+    }
 
     @Test
     void testFindById() {
@@ -233,4 +245,20 @@ class UserServiceTest {
         assertEquals("John", createdUser.getName());
         verify(userRepository).save(john);
     }
+
+    @Test
+    void testGetAllUsers() {
+        List<User> userList = Arrays.asList(john, alice, bob);
+        when(userRepository.findAll()).thenReturn(userList);
+
+        List<User> result = userService.getAllUsers();
+
+        assertNotNull(result);
+        assertEquals(3, result.size());
+        assertEquals("John", result.get(0).getName());
+        assertEquals("Alice", result.get(1).getName());
+        assertEquals("Bob", result.get(2).getName());
+        verify(userRepository).findAll();
+    }
+
 }
