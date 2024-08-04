@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.ResponseEntity; // Import this
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 
 import java.util.Optional;
@@ -67,6 +67,20 @@ class WebControllerTest {
         verify(model).addAttribute("name", "John");
         verify(userRepository).save(user);
     }
+
+    @Test
+    void testSignUp_UsernameAlreadyExists() {
+        User user = new User();
+        user.setUname("existingUser");
+
+        when(userRepository.findByUname("existingUser")).thenReturn(Optional.of(user));
+
+        String viewName = webController.signUp(user, model);
+        assertEquals("signup", viewName);
+        verify(model).addAttribute("error", "Username already exists");
+        verify(userRepository, never()).save(any(User.class));
+    }
+
     @Test
     void testLogin_Success() {
         User user = new User();
@@ -130,18 +144,22 @@ class WebControllerTest {
 
     @Test
     void testListUsers_NoSort() {
-        webController.listUsers(null, model);
+        String viewName = webController.listUsers(null, model);
+        assertEquals("users", viewName);
         verify(userService).findAllUsers();
+        verify(model).addAttribute(eq("users"), anyList());
     }
 
     @Test
     void testListUsers_SortByName() {
-        webController.listUsers("name", model);
+        String viewName = webController.listUsers("name", model);
+        assertEquals("users", viewName);
         verify(userService).findAllUsersSortedByName();
+        verify(model).addAttribute(eq("users"), anyList());
     }
 
     @Test
-    void testEditUserForm() {
+    void testEditUserForm_ValidUser() {
         User user = new User();
         when(userService.findById(1L)).thenReturn(Optional.of(user));
 
@@ -151,7 +169,7 @@ class WebControllerTest {
     }
 
     @Test
-    void testEditUserForm_UserNotFound() {
+    void testEditUserForm_InvalidUser() {
         when(userService.findById(1L)).thenReturn(Optional.empty());
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
