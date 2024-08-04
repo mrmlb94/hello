@@ -21,7 +21,7 @@ public class QuizController {
     }
 
     @PostMapping("/submitQuiz")
-    public ResponseEntity<?> submitQuiz(@RequestBody QuizResult submission, HttpSession session) {
+    public ResponseEntity<Object> submitQuiz(@RequestBody QuizResult submission, HttpSession session) {
         String username = (String) session.getAttribute("username");
         if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in.");
