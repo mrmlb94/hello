@@ -2,7 +2,6 @@ package com.userhello.hello.controller;
 
 import com.userhello.hello.model.User;
 import com.userhello.hello.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,8 +10,12 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+
+    // Constructor injection
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/signup")
     public User signUp(@RequestBody User user) {
