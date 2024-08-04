@@ -1,3 +1,14 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=bugs)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=coverage)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=mrmlb94_hello&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=mrmlb94_hello)
 [![Java CI with Maven](https://github.com/mrmlb94/hello/actions/workflows/maven.yml/badge.svg)](https://github.com/mrmlb94/hello/actions/workflows/maven.yml)[![codecov](https://codecov.io/github/mrmlb94/hello/branch/main/graph/badge.svg?token=UZPZ0UC5J3)](https://codecov.io/github/mrmlb94/hello)
 
 
