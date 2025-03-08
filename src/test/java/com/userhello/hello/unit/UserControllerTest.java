@@ -1,6 +1,8 @@
-package com.userhello.hello.controller;
+package com.userhello.hello.unit;
+
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.userhello.hello.controller.UserController;
 import com.userhello.hello.model.User;
 import com.userhello.hello.service.UserService;
 import org.junit.jupiter.api.BeforeEach;

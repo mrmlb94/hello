@@ -9,17 +9,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+//import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 import java.util.Optional;
 
 @Controller
+@RequestMapping("/")
 public class WebController {
     private static final String LOGIN_VIEW = "login";
     private static final String WELCOME_VIEW = "welcome";
     private static final String USER_ID_ATTR = "userId";
     private static final String REDIRECT_LOGIN = "redirect:/login";
-
+    
     private final UserService userService;
     private final UserRepository userRepository;
 
@@ -28,10 +30,16 @@ public class WebController {
         this.userRepository = userRepository;
     }
 
-    @GetMapping("/")
-    public String showLogin(Model model) {
+    @GetMapping("/login")
+    public String showLoginPage(Model model) {
+        System.out.println("🚀 Loading login page...");
         model.addAttribute("user", new User());
-        return LOGIN_VIEW;
+        return "login";
+    }
+
+    @GetMapping("/")
+    public String redirectToLogin() {
+        return "redirect:/login"; 
     }
 
     @GetMapping("/signup")
@@ -49,7 +57,7 @@ public class WebController {
             }
             User savedUser = userRepository.save(user);
             model.addAttribute("name", savedUser.getName());
-            return WELCOME_VIEW; // Use the constant here
+            return WELCOME_VIEW;
         } catch (UsernameAlreadyExistsException e) {
             model.addAttribute("error", e.getMessage());
             return "signup";
@@ -73,30 +81,17 @@ public class WebController {
     @GetMapping("/welcome")
     public String welcomePage(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute(USER_ID_ATTR);
-        if (userId == null) {
-            return REDIRECT_LOGIN;
+        if (userId == null || userService.findById(userId).isEmpty()) {
+            model.addAttribute("error", "Please log in first.");
+            return LOGIN_VIEW;
         }
-        Optional<User> user = userService.findById(userId);
-        if (user.isEmpty()) {
-            return REDIRECT_LOGIN;
-        }
-        model.addAttribute("name", user.get().getName());
+        model.addAttribute("name", userService.findById(userId).get().getName());
         return WELCOME_VIEW;
-    }
-
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return LOGIN_VIEW;
     }
 
     @GetMapping("/users")
     public String listUsers(@RequestParam(name = "sort", required = false) String sort, Model model) {
-        List<User> users;
-        if ("name".equals(sort)) {
-            users = userService.findAllUsersSortedByName();
-        } else {
-            users = userService.findAllUsers();
-        }
+        List<User> users = "name".equals(sort) ? userService.findAllUsersSortedByName() : userService.findAllUsers();
         model.addAttribute("users", users);
         return "users";
     }

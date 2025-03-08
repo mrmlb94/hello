@@ -1,4 +1,5 @@
-package com.userhello.hello.integration;
+package com.userhello.hello.unit;
+
 
 import com.userhello.hello.exception.UsernameAlreadyExistsException;
 import com.userhello.hello.model.User;
