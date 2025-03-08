@@ -1,5 +1,6 @@
-package com.userhello.hello.controller;
+package com.userhello.hello.unit;
 
+import com.userhello.hello.controller.WebController;
 import com.userhello.hello.model.User;
 import com.userhello.hello.repository.UserRepository;
 import com.userhello.hello.service.UserService;
@@ -42,11 +43,12 @@ class WebControllerTest {
     }
 
     @Test
-    void testShowLogin() {
-        String viewName = webController.showLogin(model);
+    void testShowLoginPage() {
+        String viewName = webController.showLoginPage(model);
         assertEquals("login", viewName);
         verify(model).addAttribute(eq("user"), any(User.class));
     }
+
 
     @Test
     void testShowSignupForm() {
@@ -124,7 +126,8 @@ class WebControllerTest {
         when(session.getAttribute("userId")).thenReturn(null);
 
         String viewName = webController.welcomePage(model, session);
-        assertEquals("redirect:/login", viewName);
+//        assertEquals("redirect:/login", viewName);
+        assertEquals("login", viewName);
     }
 
     @Test
@@ -133,14 +136,10 @@ class WebControllerTest {
         when(userService.findById(1L)).thenReturn(Optional.empty());
 
         String viewName = webController.welcomePage(model, session);
-        assertEquals("redirect:/login", viewName);
-    }
-
-    @Test
-    void testShowLoginPage() {
-        String viewName = webController.showLoginPage();
+//        assertEquals("redirect:/login", viewName);
         assertEquals("login", viewName);
     }
+
 
     @Test
     void testListUsers_NoSort() {

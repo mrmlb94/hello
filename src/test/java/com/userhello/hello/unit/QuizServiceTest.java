@@ -38,7 +38,9 @@ class QuizServiceTest {
     @Test
     void testSaveQuizResultWithException() {
         QuizResult quizResult = new QuizResult("user1", 80);
-        when(quizResultRepository.save(any(QuizResult.class))).thenThrow(new DataAccessException("Failed to access data") {});
+        when(quizResultRepository.save(any(QuizResult.class))).thenThrow(new DataAccessException("Failed to access data") {
+            private static final long serialVersionUID = 1L; // مقدار serialVersionUID اضافه شد
+        });
 
         Exception exception = assertThrows(DataAccessException.class, () -> {
             quizService.saveQuizResult(quizResult);
@@ -62,11 +64,3 @@ class QuizServiceTest {
         assertEquals(100, savedHighScoreResult.getScore());
     }
 }
-/***
-testSaveQuizResult: This is a test, which verifies that saving a QuizResult works as expected.
- testSaveQuizResultWithException: Tests the behavior of QuizService when the underlying repository throws an exception.
- This is critical for ensuring the service can handle unexpected failures gracefully.
-testSaveQuizResultBoundaryScores: This test checks how the service handles edge cases for scores,
- specifically the minimum and maximum valid scores.
- It's a good practice to test boundary conditions to ensure data integrity.
-***/

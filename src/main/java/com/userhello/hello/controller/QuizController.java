@@ -19,6 +19,12 @@ public class QuizController {
     public QuizController(QuizService quizService) {
         this.quizService = quizService;
     }
+    
+    @GetMapping
+    public ResponseEntity<String> apiRoot() {
+        return ResponseEntity.ok("API is up and running");
+    }
+
 
     @PostMapping("/submitQuiz")
     public ResponseEntity<Object> submitQuiz(@RequestBody QuizResult submission, HttpSession session) {

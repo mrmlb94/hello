@@ -1,6 +1,10 @@
-package com.userhello.hello.model;
+package com.userhello.hello.unit;
+
 
 import org.junit.jupiter.api.Test;
+
+import com.userhello.hello.model.User;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {

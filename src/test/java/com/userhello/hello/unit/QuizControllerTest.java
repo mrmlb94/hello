@@ -1,40 +1,46 @@
-package com.userhello.hello.controller;
+package com.userhello.hello.unit;
 
-import com.userhello.hello.service.QuizService;
+import com.userhello.hello.controller.QuizController;
 import com.userhello.hello.model.QuizResult;
+import com.userhello.hello.service.QuizService;
 import jakarta.servlet.http.HttpSession;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@ExtendWith(SpringExtension.class)
+@WebMvcTest(controllers = QuizController.class)
 class QuizControllerTest {
 
-    @Mock
-    private QuizService quizService;
-
-    @Mock
-    private HttpSession session;
-
-    @InjectMocks
-    private QuizController quizController;
-
+    @Autowired
     private MockMvc mockMvc;
 
-    @BeforeEach
-    public void setUp() {
-        MockitoAnnotations.openMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(quizController).build();
+    @MockBean
+    private QuizService quizService;
+
+    @MockBean
+    private HttpSession session;
+
+    @Test
+    void testControllerLoads() throws Exception {
+        mockMvc.perform(get("/api")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -44,7 +50,7 @@ class QuizControllerTest {
         QuizResult submission = new QuizResult();
 
         // Execute
-        ResponseEntity<?> response = quizController.submitQuiz(submission, session);
+        ResponseEntity<?> response = new QuizController(quizService).submitQuiz(submission, session);
 
         // Verify
         assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
@@ -64,7 +70,7 @@ class QuizControllerTest {
         when(quizService.saveQuizResult(any(QuizResult.class))).thenReturn(savedSubmission);
 
         // Execute
-        ResponseEntity<?> response = quizController.submitQuiz(submission, session);
+        ResponseEntity<?> response = new QuizController(quizService).submitQuiz(submission, session);
 
         // Verify
         assertEquals(HttpStatus.OK, response.getStatusCode());

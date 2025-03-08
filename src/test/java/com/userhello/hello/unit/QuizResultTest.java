@@ -1,4 +1,5 @@
-package com.userhello.hello.integration;
+package com.userhello.hello.unit;
+
 
 import com.userhello.hello.model.QuizResult;
 import org.junit.jupiter.api.Test;

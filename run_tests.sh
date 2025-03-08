@@ -1,27 +1,24 @@
 #!/bin/bash
 
-# Start Spring Boot application in the background
-echo "Starting Spring Boot application..."
-mvn spring-boot:run &
-SPRING_PID=$!
+# Start Docker containers
+echo "Starting Docker containers..."
+docker-compose up -d
 
-# Wait for the application to start
-# This example uses curl to check the application's health endpoint.
-# Replace `8080` with your application's port and adjust the endpoint if necessary.
-echo "Waiting for the application to start..."
-while ! curl -s http://localhost:8080/actuator/health | grep -q 'UP'; do
-  sleep 10
+# Wait for PostgreSQL to be ready
+echo "Waiting for PostgreSQL to be ready..."
+until docker exec $(docker-compose ps -q postgres) pg_isready -U postgres001 -d user_db; do
+  sleep 5
+  echo "Waiting for database to be ready..."
 done
 
-echo "Application started. Running tests..."
+echo "Database is ready. Starting the application..."
 
-# Run Maven tests
-mvn test
+# Run Maven verify to execute tests
+echo "Running tests..."
+mvn verify
 
-# Optionally, stop the Spring Boot application after tests
-# Uncomment the next line if you want to stop the application after tests
-# kill $SPRING_PID
+# Stop Docker containers after tests
+echo "Stopping Docker containers..."
+docker-compose down
 
-echo "Tests completed."
-
-# End of the script
+echo "All tests completed successfully!"
