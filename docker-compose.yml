@@ -2,6 +2,7 @@ version: '3.9'
 
 services:
   postgres:
+    container_name: postgres
     image: postgres:latest
     environment:
       POSTGRES_DB: user_db
@@ -19,7 +20,7 @@ services:
       test: ["CMD-SHELL", "pg_isready -d user_db -U postgres001"]
       interval: 30s
       timeout: 10s
-      retries: 10
+      retries: 20
 
   webapp:
     image: hello-webapp
@@ -40,7 +41,7 @@ services:
     environment:
         SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
         SPRING_DATASOURCE_USERNAME : postgres001
-        SPRING_DATASOURCE_PASSWORD : ${DB_PASSWORD}
+        SPRING_DATASOURCE_PASSWORD : Am2836
     networks:
       - mynetwork
 
@@ -49,3 +50,4 @@ volumes:
 
 networks:
   mynetwork:
+    name: mynetwork
