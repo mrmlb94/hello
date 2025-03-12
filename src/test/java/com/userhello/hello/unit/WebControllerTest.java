@@ -134,7 +134,6 @@ class WebControllerTest {
         when(session.getAttribute("userId")).thenReturn(null);
 
         String viewName = webController.welcomePage(model, session);
-//        assertEquals("redirect:/login", viewName);
         assertEquals("login", viewName);
     }
 
@@ -144,7 +143,6 @@ class WebControllerTest {
         when(userService.findById(1L)).thenReturn(Optional.empty());
 
         String viewName = webController.welcomePage(model, session);
-//        assertEquals("redirect:/login", viewName);
         assertEquals("login", viewName);
     }
 
