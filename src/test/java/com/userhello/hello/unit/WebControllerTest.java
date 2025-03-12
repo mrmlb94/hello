@@ -42,6 +42,14 @@ class WebControllerTest {
         webController = new WebController(userService, userRepository);
     }
 
+    
+    @Test
+    void testRedirectToLogin() {
+        String viewName = webController.redirectToLogin();
+        assertEquals("redirect:/login", viewName);
+    }
+
+    
     @Test
     void testShowLoginPage() {
         String viewName = webController.showLoginPage(model);
