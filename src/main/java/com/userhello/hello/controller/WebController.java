@@ -9,8 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.servlet.view.RedirectView;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,7 +21,10 @@ public class WebController {
     private static final String WELCOME_VIEW = "welcome";
     private static final String USER_ID_ATTR = "userId";
     private static final String REDIRECT_LOGIN = "redirect:/login";
-    
+    private static final String SIGNUP_VIEW = "signup";
+    private static final String ERROR_ATTR = "error";
+
+
     private final UserService userService;
     private final UserRepository userRepository;
 
@@ -32,20 +35,20 @@ public class WebController {
 
     @GetMapping("/login")
     public String showLoginPage(Model model) {
-        System.out.println("🚀 Loading login page...");
+        logger.info("🚀 Loading login page...");
         model.addAttribute("user", new User());
-        return "login";
+        return LOGIN_VIEW;
     }
 
     @GetMapping("/")
     public String redirectToLogin() {
-        return "redirect:/login"; 
+        return REDIRECT_LOGIN; 
     }
 
     @GetMapping("/signup")
     public String showSignupForm(Model model) {
         model.addAttribute("user", new User());
-        return "signup";
+        return SIGNUP_VIEW;
     }
 
     @PostMapping("/signup")
@@ -59,7 +62,7 @@ public class WebController {
             model.addAttribute("name", savedUser.getName());
             return WELCOME_VIEW;
         } catch (UsernameAlreadyExistsException e) {
-            model.addAttribute("error", e.getMessage());
+            model.addAttribute(ERROR_ATTR, e.getMessage());
             return "signup";
         }
     }
@@ -68,7 +71,7 @@ public class WebController {
     public String login(@RequestParam String uname, Model model, HttpSession session) {
         Optional<User> userOptional = userService.findByUname(uname);
         if (userOptional.isEmpty()) {
-            model.addAttribute("error", "Username not found. Please sign up.");
+            model.addAttribute(ERROR_ATTR, "Username not found. Please sign up.");
             return LOGIN_VIEW;
         }
         User user = userOptional.get();
@@ -82,7 +85,7 @@ public class WebController {
     public String welcomePage(Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute(USER_ID_ATTR);
         if (userId == null || userService.findById(userId).isEmpty()) {
-            model.addAttribute("error", "Please log in first.");
+            model.addAttribute(ERROR_ATTR, "Please log in first.");
             return LOGIN_VIEW;
         }
         model.addAttribute("name", userService.findById(userId).get().getName());
