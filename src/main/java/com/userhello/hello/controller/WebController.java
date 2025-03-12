@@ -64,7 +64,7 @@ public class WebController {
             return WELCOME_VIEW;
         } catch (UsernameAlreadyExistsException e) {
             model.addAttribute(ERROR_ATTR, e.getMessage());
-            return "signup";
+            return SIGNUP_VIEW;
         }
     }
 
