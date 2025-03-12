@@ -37,7 +37,7 @@ public class HelloApplication implements CommandLineRunner {
     public void run(String... args) {
         logger.info("🚀 Spring Boot started...");
         boolean hasWebController = applicationContext.containsBean("webController");
-        logger.info("🛠 WebController loaded: " + hasWebController);
+        logger.info("🛠 WebController loaded: {}", hasWebController);
 
         logger.info("Datasource URL: {}", datasourceUrl);
         logger.info("Datasource Username: {}", datasourceUsername);
