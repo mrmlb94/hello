@@ -40,7 +40,6 @@ jobs:
 
       - name: Build and start containers
         run: docker-compose up -d --build
-        # اینجا Docker Build انجام می‌شود، که حالا JAR موجود است
 
       - name: Wait for services to be ready
         run: |
