@@ -17,6 +17,7 @@ import java.util.Optional;
 @Controller
 @RequestMapping("/")
 public class WebController {
+    private static final Logger logger = LoggerFactory.getLogger(WebController.class);
     private static final String LOGIN_VIEW = "login";
     private static final String WELCOME_VIEW = "welcome";
     private static final String USER_ID_ATTR = "userId";
