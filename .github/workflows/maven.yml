@@ -9,6 +9,11 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      DB_URL: "jdbc:postgresql://postgres:5432/user_db"
+      DB_USERNAME: "postgres001"
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
