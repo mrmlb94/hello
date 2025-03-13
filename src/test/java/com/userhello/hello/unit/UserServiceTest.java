@@ -29,13 +29,13 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private User Ali;
+    private User ali;
     private User alice;
     private User bob;
 
     @BeforeEach
     void setUp() {
-        Ali = new User.Builder()
+        ali = new User.Builder()
                 .setId(1L)
                 .setName("Ali")
                 .setUname("Aliny")
@@ -89,7 +89,7 @@ class UserServiceTest {
 
     @Test
     void testFindById() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(Ali));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(ali));
 
         Optional<User> result = userService.findById(1L);
 
@@ -117,18 +117,18 @@ class UserServiceTest {
 
     @Test
     void testUpdateUser() {
-        when(userRepository.save(Ali)).thenReturn(Ali);
+        when(userRepository.save(ali)).thenReturn(ali);
 
-        User updatedUser = userService.updateUser(Ali);
+        User updatedUser = userService.updateUser(ali);
 
         assertNotNull(updatedUser);
         assertEquals("Ali", updatedUser.getName());
-        verify(userRepository).save(Ali);
+        verify(userRepository).save(ali);
     }
 
     @Test
     void testFindByName() {
-        List<User> userList = Collections.singletonList(Ali);
+        List<User> userList = Collections.singletonList(ali);
         when(userRepository.findByName("Ali")).thenReturn(userList);
 
         List<User> result = userService.findByName("Ali");
@@ -160,7 +160,7 @@ class UserServiceTest {
 
     @Test
     void testFindByUname() {
-        when(userRepository.findByUname("AliAhmadi")).thenReturn(Optional.of(Ali));
+        when(userRepository.findByUname("AliAhmadi")).thenReturn(Optional.of(ali));
 
         Optional<User> foundUser = userService.findByUname("AliAhmadi");
 
@@ -181,7 +181,7 @@ class UserServiceTest {
 
     @Test
     void testFindAllUsers() {
-        List<User> userList = Arrays.asList(Ali, alice);
+        List<User> userList = Arrays.asList(ali, alice);
         when(userRepository.findAll()).thenReturn(userList);
 
         List<User> users = userService.findAllUsers();
@@ -192,7 +192,7 @@ class UserServiceTest {
 
     @Test
     void testFindAllUsersSortedByName() {
-        List<User> userList = Arrays.asList(alice, bob, Ali);
+        List<User> userList = Arrays.asList(alice, bob, ali);
         when(userRepository.findAllByOrderByNameAsc()).thenReturn(userList);
 
         List<User> result = userService.findAllUsersSortedByName();
@@ -217,7 +217,7 @@ class UserServiceTest {
 
     @Test
     void testGetUserById() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(Ali));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(ali));
 
         User foundUser = userService.getUserById(1L);
 
@@ -238,18 +238,18 @@ class UserServiceTest {
 
     @Test
     void testCreateUser() {
-        when(userRepository.save(Ali)).thenReturn(Ali);
+        when(userRepository.save(ali)).thenReturn(ali);
 
-        User createdUser = userService.createUser(Ali);
+        User createdUser = userService.createUser(ali);
 
         assertNotNull(createdUser);
         assertEquals("Ali", createdUser.getName());
-        verify(userRepository).save(Ali);
+        verify(userRepository).save(ali);
     }
 
     @Test
     void testGetAllUsers() {
-        List<User> userList = Arrays.asList(Ali, alice, bob);
+        List<User> userList = Arrays.asList(ali, alice, bob);
         when(userRepository.findAll()).thenReturn(userList);
 
         List<User> result = userService.getAllUsers();
