@@ -1,0 +1,47 @@
+### Ignore Large Binary Files ###
+google-chrome-stable_current_amd64.deb
+chromedriver-linux64/
+
+### Ignore Build and Generated Files ###
+target/*
+build/
+
+### STS (Spring Tool Suite) ###
+.apt_generated
+.factorypath
+.springBeans
+.sts4-cache
+
+### Eclipse Metadata Files (Required for Exam) ###
+!.project
+!.classpath
+!.settings/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+### Node.js ###
+node_modules/
+
+### Log Files ###
+*.log
+
+### Ignore Docker Ignore Rules (Optional) ###
+!Dockerfile
+!docker-compose.yml
+
+### Ignore Sensitive Data ###
+.env

@@ -28,7 +28,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build JAR with Maven
-        run: mvn clean package -DskipTests  # ✅ This ensures the JAR exists before Docker runs
+        run: mvn clean package -DskipTests 
 
       - name: Install Docker Compose
         run: |
@@ -36,10 +36,10 @@ jobs:
           sudo apt-get install -y docker-compose
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
       - name: Build and start containers
-        run: docker-compose up -d --build  # ✅ Now Docker can find the JAR
+        run: docker-compose up -d --build  
 
       - name: Wait for services to be ready
         run: |
