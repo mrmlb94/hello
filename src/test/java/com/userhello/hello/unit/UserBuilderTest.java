@@ -23,7 +23,7 @@ class UserBuilderTest {
 
     @Test
     void testBuilderSetName() {
-        String name = "John";
+        String name = "Ali";
         User user = new User.Builder()
                 .setName(name)
                 .build();
@@ -32,7 +32,7 @@ class UserBuilderTest {
 
     @Test
     void testBuilderSetUname() {
-        String uname = "john_doe";
+        String uname = "Ali_Ahmadi";
         User user = new User.Builder()
                 .setUname(uname)
                 .build();
@@ -41,7 +41,7 @@ class UserBuilderTest {
 
     @Test
     void testBuilderSetFamilyName() {
-        String familyName = "Doe";
+        String familyName = "Ahmadi";
         User user = new User.Builder()
                 .setFamilyName(familyName)
                 .build();
@@ -113,7 +113,7 @@ class UserBuilderTest {
 
     @Test
     void testBuilderSetEmail() {
-        String email = "john.doe@example.com";
+        String email = "Ali.Ahmadi@example.com";
         User user = new User.Builder()
                 .setEmail(email)
                 .build();
@@ -124,9 +124,9 @@ class UserBuilderTest {
     void testBuilderBuild() {
         User user = new User.Builder()
                 .setId(1L)
-                .setName("John")
-                .setUname("john_doe")
-                .setFamilyName("Doe")
+                .setName("Ali")
+                .setUname("Ali_Ahmadi")
+                .setFamilyName("Ahmadi")
                 .setBirthdate(new Date())
                 .setBirthPlace("New York")
                 .setCurrentCountry("USA")
@@ -134,20 +134,20 @@ class UserBuilderTest {
                 .setSchoolName("NYU")
                 .setGpa(3.5f)
                 .setPhone("123-456-7890")
-                .setEmail("john.doe@example.com")
+                .setEmail("Ali.Ahmadi@example.com")
                 .build();
 
         assertNotNull(user);
         assertEquals(1L, user.getId());
-        assertEquals("John", user.getName());
-        assertEquals("john_doe", user.getUname());
-        assertEquals("Doe", user.getFamilyName());
+        assertEquals("Ali", user.getName());
+        assertEquals("Ali_Ahmadi", user.getUname());
+        assertEquals("Ahmadi", user.getFamilyName());
         assertEquals("New York", user.getBirthPlace());
         assertEquals("USA", user.getCurrentCountry());
         assertEquals("New York", user.getCurrentCity());
         assertEquals("NYU", user.getSchoolName());
         assertEquals(3.5f, user.getGpa());
         assertEquals("123-456-7890", user.getPhone());
-        assertEquals("john.doe@example.com", user.getEmail());
+        assertEquals("Ali.Ahmadi@example.com", user.getEmail());
     }
 }

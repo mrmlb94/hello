@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8cb3266 (Updated E2E tests and project structure)
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -18,7 +22,17 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
+<<<<<<< HEAD
 
+=======
+      - name: Install Docker Compose
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker-compose
+
+      - name: Build and run services
+        run: docker-compose up -d --build
+>>>>>>> 8cb3266 (Updated E2E tests and project structure)
       - name: Cache Maven packages
         uses: actions/cache@v3
         with:
@@ -27,6 +41,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+<<<<<<< HEAD
       - name: Build with Maven
         run: mvn clean package
 
@@ -34,19 +49,30 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y docker-compose
+=======
+      - uses: browser-actions/setup-chrome@latest
+>>>>>>> 8cb3266 (Updated E2E tests and project structure)
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
       - name: Build and start containers
         run: docker-compose up -d --build
+<<<<<<< HEAD
+        # اینجا Docker Build انجام می‌شود، که حالا JAR موجود است
+=======
+>>>>>>> 8cb3266 (Updated E2E tests and project structure)
 
       - name: Wait for services to be ready
         run: |
           chmod +x ./monitor_and_test.sh
           ./monitor_and_test.sh
 
+<<<<<<< HEAD
       - name: Run Tests (Skip E2E Tests)
+=======
+      - name: Build with Maven (Skip E2E Tests)
+>>>>>>> 8cb3266 (Updated E2E tests and project structure)
         run: mvn clean verify -P skip-e2e-tests
 
       - name: Generate JaCoCo report
@@ -58,4 +84,8 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: target/site/jacoco/jacoco.xml
           fail_ci_if_error: true
+<<<<<<< HEAD
           verbose: true
+=======
+          verbose: true
+>>>>>>> 8cb3266 (Updated E2E tests and project structure)

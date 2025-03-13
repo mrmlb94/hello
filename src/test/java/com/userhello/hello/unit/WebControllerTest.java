@@ -68,13 +68,13 @@ class WebControllerTest {
     @Test
     void testSignUp_Success() {
         User user = new User();
-        user.setName("John");
+        user.setName("Ali");
         when(userRepository.findByUname(user.getUname())).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         String viewName = webController.signUp(user, model);
         assertEquals("welcome", viewName);
-        verify(model).addAttribute("name", "John");
+        verify(model).addAttribute("name", "Ali");
         verify(userRepository).save(user);
     }
 
@@ -95,23 +95,23 @@ class WebControllerTest {
     void testLogin_Success() {
         User user = new User();
         user.setId(1L);
-        user.setUname("john");
-        user.setName("John");
+        user.setUname("Ali");
+        user.setName("Ali");
 
-        when(userService.findByUname("john")).thenReturn(Optional.of(user));
+        when(userService.findByUname("Ali")).thenReturn(Optional.of(user));
 
-        String viewName = webController.login("john", model, session);
+        String viewName = webController.login("Ali", model, session);
         assertEquals("welcome", viewName);
         verify(session).setAttribute("userId", 1L);
-        verify(session).setAttribute("username", "john");
-        verify(model).addAttribute("name", "John");
+        verify(session).setAttribute("username", "Ali");
+        verify(model).addAttribute("name", "Ali");
     }
 
     @Test
     void testLogin_Failure() {
-        when(userService.findByUname("john")).thenReturn(Optional.empty());
+        when(userService.findByUname("Ali")).thenReturn(Optional.empty());
 
-        String viewName = webController.login("john", model, session);
+        String viewName = webController.login("Ali", model, session);
         assertEquals("login", viewName);
         verify(model).addAttribute("error", "Username not found. Please sign up.");
     }
@@ -119,14 +119,14 @@ class WebControllerTest {
     @Test
     void testWelcomePage_LoggedIn() {
         User user = new User();
-        user.setName("John");
+        user.setName("Ali");
 
         when(session.getAttribute("userId")).thenReturn(1L);
         when(userService.findById(1L)).thenReturn(Optional.of(user));
 
         String viewName = webController.welcomePage(model, session);
         assertEquals("welcome", viewName);
-        verify(model).addAttribute("name", "John");
+        verify(model).addAttribute("name", "Ali");
     }
 
     @Test

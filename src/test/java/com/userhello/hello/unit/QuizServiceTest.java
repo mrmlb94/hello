@@ -39,7 +39,7 @@ class QuizServiceTest {
     void testSaveQuizResultWithException() {
         QuizResult quizResult = new QuizResult("user1", 80);
         when(quizResultRepository.save(any(QuizResult.class))).thenThrow(new DataAccessException("Failed to access data") {
-            private static final long serialVersionUID = 1L; // مقدار serialVersionUID اضافه شد
+            private static final long serialVersionUID = 1L; 
         });
 
         Exception exception = assertThrows(DataAccessException.class, () -> {

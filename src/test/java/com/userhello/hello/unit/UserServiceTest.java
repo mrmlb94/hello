@@ -29,18 +29,18 @@ class UserServiceTest {
     @InjectMocks
     private UserService userService;
 
-    private User john;
+    private User Ali;
     private User alice;
     private User bob;
 
     @BeforeEach
     void setUp() {
-        john = new User.Builder()
+        Ali = new User.Builder()
                 .setId(1L)
-                .setName("John")
-                .setUname("johnny")
-                .setFamilyName("Doe")
-                .setEmail("john.doe@example.com")
+                .setName("Ali")
+                .setUname("Aliny")
+                .setFamilyName("Ahmadi")
+                .setEmail("Ali.Ahmadi@example.com")
                 .build();
 
         alice = new User.Builder()
@@ -89,12 +89,12 @@ class UserServiceTest {
 
     @Test
     void testFindById() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(john));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(Ali));
 
         Optional<User> result = userService.findById(1L);
 
         assertTrue(result.isPresent());
-        assertEquals("John", result.get().getName());
+        assertEquals("Ali", result.get().getName());
         verify(userRepository).findById(1L);
     }
 
@@ -117,26 +117,26 @@ class UserServiceTest {
 
     @Test
     void testUpdateUser() {
-        when(userRepository.save(john)).thenReturn(john);
+        when(userRepository.save(Ali)).thenReturn(Ali);
 
-        User updatedUser = userService.updateUser(john);
+        User updatedUser = userService.updateUser(Ali);
 
         assertNotNull(updatedUser);
-        assertEquals("John", updatedUser.getName());
-        verify(userRepository).save(john);
+        assertEquals("Ali", updatedUser.getName());
+        verify(userRepository).save(Ali);
     }
 
     @Test
     void testFindByName() {
-        List<User> userList = Collections.singletonList(john);
-        when(userRepository.findByName("John")).thenReturn(userList);
+        List<User> userList = Collections.singletonList(Ali);
+        when(userRepository.findByName("Ali")).thenReturn(userList);
 
-        List<User> result = userService.findByName("John");
+        List<User> result = userService.findByName("Ali");
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        assertEquals("John", result.get(0).getName());
-        verify(userRepository).findByName("John");
+        assertEquals("Ali", result.get(0).getName());
+        verify(userRepository).findByName("Ali");
     }
 
     @Test
@@ -160,13 +160,13 @@ class UserServiceTest {
 
     @Test
     void testFindByUname() {
-        when(userRepository.findByUname("johndoe")).thenReturn(Optional.of(john));
+        when(userRepository.findByUname("AliAhmadi")).thenReturn(Optional.of(Ali));
 
-        Optional<User> foundUser = userService.findByUname("johndoe");
+        Optional<User> foundUser = userService.findByUname("AliAhmadi");
 
         assertTrue(foundUser.isPresent());
-        assertEquals("johnny", foundUser.get().getUname());
-        verify(userRepository).findByUname("johndoe");
+        assertEquals("Aliny", foundUser.get().getUname());
+        verify(userRepository).findByUname("AliAhmadi");
     }
 
     @Test
@@ -181,7 +181,7 @@ class UserServiceTest {
 
     @Test
     void testFindAllUsers() {
-        List<User> userList = Arrays.asList(john, alice);
+        List<User> userList = Arrays.asList(Ali, alice);
         when(userRepository.findAll()).thenReturn(userList);
 
         List<User> users = userService.findAllUsers();
@@ -192,7 +192,7 @@ class UserServiceTest {
 
     @Test
     void testFindAllUsersSortedByName() {
-        List<User> userList = Arrays.asList(alice, bob, john);
+        List<User> userList = Arrays.asList(alice, bob, Ali);
         when(userRepository.findAllByOrderByNameAsc()).thenReturn(userList);
 
         List<User> result = userService.findAllUsersSortedByName();
@@ -201,7 +201,7 @@ class UserServiceTest {
         assertEquals(3, result.size());
         assertEquals("Alice", result.get(0).getName());
         assertEquals("Bob", result.get(1).getName());
-        assertEquals("John", result.get(2).getName());
+        assertEquals("Ali", result.get(2).getName());
         verify(userRepository).findAllByOrderByNameAsc();
     }
 
@@ -217,12 +217,12 @@ class UserServiceTest {
 
     @Test
     void testGetUserById() {
-        when(userRepository.findById(1L)).thenReturn(Optional.of(john));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(Ali));
 
         User foundUser = userService.getUserById(1L);
 
         assertNotNull(foundUser);
-        assertEquals("John", foundUser.getName());
+        assertEquals("Ali", foundUser.getName());
         verify(userRepository).findById(1L);
     }
 
@@ -238,25 +238,25 @@ class UserServiceTest {
 
     @Test
     void testCreateUser() {
-        when(userRepository.save(john)).thenReturn(john);
+        when(userRepository.save(Ali)).thenReturn(Ali);
 
-        User createdUser = userService.createUser(john);
+        User createdUser = userService.createUser(Ali);
 
         assertNotNull(createdUser);
-        assertEquals("John", createdUser.getName());
-        verify(userRepository).save(john);
+        assertEquals("Ali", createdUser.getName());
+        verify(userRepository).save(Ali);
     }
 
     @Test
     void testGetAllUsers() {
-        List<User> userList = Arrays.asList(john, alice, bob);
+        List<User> userList = Arrays.asList(Ali, alice, bob);
         when(userRepository.findAll()).thenReturn(userList);
 
         List<User> result = userService.getAllUsers();
 
         assertNotNull(result);
         assertEquals(3, result.size());
-        assertEquals("John", result.get(0).getName());
+        assertEquals("Ali", result.get(0).getName());
         assertEquals("Alice", result.get(1).getName());
         assertEquals("Bob", result.get(2).getName());
         verify(userRepository).findAll();
