@@ -59,7 +59,7 @@ This project is a Java web application that provides user management and a quiz 
     ```bash
     mvn test
     ```
-- **Run integration tests**:
+- **Run integration and e2e tests**:
     ```bash
     mvn verify
     ```
