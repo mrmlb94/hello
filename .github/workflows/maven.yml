@@ -10,9 +10,19 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     env:
-      DB_URL: "jdbc:postgresql://postgres:5432/user_db"
+      DB_URL: "jdbc:postgresql://localhost:5432/user_db"
       DB_USERNAME: "postgres001"
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    services:
+      postgres:
+        image: postgres:latest
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_DB: user_db
+          POSTGRES_USER: postgres001
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - name: Checkout code
@@ -35,27 +45,16 @@ jobs:
       - name: Build JAR with Maven
         run: mvn clean package -DskipTests 
 
-      - name: Install Docker Compose
+      - name: Run Spring Boot Application
         run: |
-          sudo apt-get update
-          sudo apt-get install -y docker-compose
+          mvn spring-boot:run &
+          sleep 20
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build and start containers
-        run: docker-compose up -d --build  
-
-      - name: Wait for services to be ready
-        run: |
-          chmod +x ./monitor_and_test.sh
-          ./monitor_and_test.sh
-
-      - name: Run Tests (Skip E2E Tests)
-        run: mvn clean verify -P skip-e2e-tests
+      - name: Run Tests (All tests including E2E)
+        run: mvn clean verify
 
       - name: Generate JaCoCo report
-        run: mvn jacoco:report -P skip-e2e-tests
+        run: mvn jacoco:report
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4.0.1
