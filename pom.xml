@@ -271,29 +271,34 @@
             </plugin>
 
             <!-- JaCoCo for Code Coverage -->
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.12</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/HelloApplication.main(String[])</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+	<plugin>
+	    <groupId>org.jacoco</groupId>
+	    <artifactId>jacoco-maven-plugin</artifactId>
+	    <version>0.8.12</version>
+	    <executions>
+		<execution>
+		    <id>prepare-agent</id>
+		    <phase>initialize</phase>
+		    <goals>
+			<goal>prepare-agent</goal>
+		    </goals>
+		</execution>
+		<execution>
+		    <id>report</id>
+		    <phase>verify</phase>
+		    <goals>
+			<goal>report</goal>
+		    </goals>
+		    <configuration>
+			<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+			<excludes>
+			    <exclude>**/HelloApplication.class</exclude>
+			</excludes>
+		    </configuration>
+		</execution>
+	    </executions>
+	</plugin>
+
             
 	        <plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
