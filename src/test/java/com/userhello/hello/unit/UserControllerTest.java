@@ -107,7 +107,7 @@ class UserControllerTest {
 
 
     @Test
-    public void testDeleteUser_Success() {
+    void testDeleteUser_Success() {
         doNothing().when(userService).deleteUser(1L);
         UserController userController = new UserController(userService);
         ResponseEntity<String> response = userController.deleteUser(1L);
