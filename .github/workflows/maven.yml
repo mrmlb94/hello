@@ -47,8 +47,9 @@ jobs:
 
       - name: Run Spring Boot Application
         run: |
-          mvn spring-boot:run &
-          sleep 20
+          mvn spring-boot:run > app.log 2>&1 &
+          sleep 30
+          cat app.log
 
       - name: Run Tests (All tests including E2E)
         run: mvn clean verify
