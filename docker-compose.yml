@@ -18,9 +18,9 @@ services:
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d user_db -U postgres001"]
-      interval: 59s
-      timeout: 10s
-      retries: 20
+      interval: 10s
+      timeout: 5s
+      retries: 10
 
   webapp:
     image: hello-webapp
@@ -35,9 +35,9 @@ services:
     restart: always
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:8081/actuator/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      interval: 5s
+      timeout: 5s
+      retries: 12
     environment:
         SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/user_db
         SPRING_DATASOURCE_USERNAME : postgres001
