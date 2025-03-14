@@ -50,7 +50,6 @@ class UserControllerTest {
         user.setUname("testuser");
         user.setName("Test");
         user.setFamilyName("User");
-        // set other fields as necessary
     }
 
     @Test
@@ -82,14 +81,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].uname").value("testuser"));
     }
 
-//    @Test
-//    void testDeleteUser() throws Exception {
-//        mockMvc.perform(delete("/api/users/1"))
-//                .andExpect(status().isOk());
-//    }
-    
-    
-    
+
     
     @Test
     void testGetUserById_NotFound() throws Exception {
