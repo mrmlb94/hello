@@ -43,14 +43,17 @@ jobs:
       - name: Show logs (troubleshooting)
         run: docker compose logs
 
-      - name: Run Tests
+
+      - name: Run Tests and Generate JaCoCo coverage
         run: mvn clean verify -P skip-e2e-tests
+
+      - name: Confirm JaCoCo report file exists
+        run: ls -la ./target/site/jacoco
 
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          files: target/site/jacoco/jacoco.xml
-          fail_ci_if_error: false  # Explicitly don't fail workflow due to temporary Codecov issues
+          files: ./target/site/jacoco/jacoco.xml
+          fail_ci_if_error: true
           verbose: true
-
