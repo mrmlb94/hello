@@ -2,6 +2,8 @@ package com.userhello.hello.controller;
 
 import com.userhello.hello.model.User;
 import com.userhello.hello.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,22 +20,31 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public User signUp(@RequestBody User user) {
-        return userService.signUp(user);
+    public ResponseEntity<User> signUp(@RequestBody User user) {
+        return ResponseEntity.ok(userService.signUp(user));
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        User user = userService.getUserById(id);
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/all")
-    public List<User> getAllUsers() {
-        return userService.findAllUsers();
+    public ResponseEntity<List<User>> getAllUsers() {
+        return ResponseEntity.ok(userService.findAllUsers());
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        try {
+            userService.deleteUser(id);
+            return ResponseEntity.ok("User deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found");
+        }
     }
 }
