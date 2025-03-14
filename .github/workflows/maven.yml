@@ -23,7 +23,7 @@ jobs:
       # Docker Compose Setup (Docker and Compose already available in ubuntu-latest)
       - name: Build and start backend and PostgreSQL via Docker Compose
         run: |
-          docker-compose up -d --build
+          docker compose up -d --build
           sleep 30  # Increase if necessary, ensure backend is fully ready
 
       - name: Check backend logs explicitly (troubleshooting)
