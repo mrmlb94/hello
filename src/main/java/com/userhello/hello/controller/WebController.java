@@ -75,9 +75,16 @@ public class WebController {
             model.addAttribute(ERROR_ATTR, "Username not found. Please sign up.");
             return LOGIN_VIEW;
         }
+        
+        
         User user = userOptional.get();
+        if (user.isLocked()) {
+            model.addAttribute("error", "Your account is locked.");
+            return "login";
+        }
+        
         session.setAttribute(USER_ID_ATTR, user.getId());
-        session.setAttribute("username", user.getUname());
+//        session.setAttribute("username", user.getUname());
         model.addAttribute("name", user.getName());
         return WELCOME_VIEW;
     }
