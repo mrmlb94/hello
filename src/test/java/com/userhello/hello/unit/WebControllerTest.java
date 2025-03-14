@@ -103,8 +103,6 @@ class WebControllerTest {
         String viewName = webController.login("Ali", model, session);
         assertEquals("welcome", viewName);
         verify(session).setAttribute("userId", 1L);
-//        verify(session).setAttribute("username", "Ali");
-//        verify(model).addAttribute("name", "Ali");
     }
 
     @Test
