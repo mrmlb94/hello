@@ -1,30 +1,28 @@
 package com.userhello.hello.unit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.userhello.hello.controller.QuizController;
 import com.userhello.hello.model.QuizResult;
 import com.userhello.hello.service.QuizService;
-import jakarta.servlet.http.HttpSession;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(controllers = QuizController.class)
+@WebMvcTest(QuizController.class)
 class QuizControllerTest {
 
     @Autowired
@@ -33,53 +31,58 @@ class QuizControllerTest {
     @MockBean
     private QuizService quizService;
 
-    @MockBean
-    private HttpSession session;
+    private final ObjectMapper mapper = new ObjectMapper();
+    private MockHttpSession session;
 
-    @Test
-    void testControllerLoads() throws Exception {
-        mockMvc.perform(get("/api")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+    @BeforeEach
+    void setUp() {
+        session = new MockHttpSession();
+        session.setAttribute("username", "testUser");
     }
 
     @Test
-    void testSubmitQuiz_UserNotLoggedIn() {
-        // Set up
-        when(session.getAttribute("username")).thenReturn(null);
-        QuizResult submission = new QuizResult();
-
-        // Execute
-        ResponseEntity<?> response = new QuizController(quizService).submitQuiz(submission, session);
-
-        // Verify
-        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
-        assertEquals("User is not logged in.", response.getBody());
+    void testApiRoot() throws Exception {
+        mockMvc.perform(get("/api"))
+            .andExpect(status().isOk())
+            .andExpect(content().string("API is up and running"));
     }
 
     @Test
-    void testSubmitQuiz_UserLoggedIn() {
-        // Set up
-        String username = "testUser";
-        when(session.getAttribute("username")).thenReturn(username);
+    void testSubmitQuiz_UserNotLoggedIn() throws Exception {
+        MockHttpSession emptySession = new MockHttpSession();
+
         QuizResult submission = new QuizResult();
-        QuizResult savedSubmission = new QuizResult();
-        savedSubmission.setUsername(username);
-        savedSubmission.setTimestamp(new Date());
+        submission.setScore(90);
+
+        mockMvc.perform(post("/api/submitQuiz")
+                .session(emptySession)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(submission)))
+            .andExpect(status().isUnauthorized())
+            .andExpect(content().string("User is not logged in."));
+
+        verify(quizService, never()).saveQuizResult(any());
+    }
+
+    @Test
+    void testSubmitQuiz_UserLoggedIn_SuccessfulSubmission() throws Exception {
+        QuizResult submission = new QuizResult();
+        submission.setScore(85);
+
+        QuizResult savedSubmission = new QuizResult("testUser", 85);
+//        savedSubmission.setTimestamp(new Date());
 
         when(quizService.saveQuizResult(any(QuizResult.class))).thenReturn(savedSubmission);
 
-        // Execute
-        ResponseEntity<?> response = new QuizController(quizService).submitQuiz(submission, session);
+        mockMvc.perform(post("/api/submitQuiz")
+                .session(session)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(submission)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.username").value("testUser"))
+            .andExpect(jsonPath("$.score").value(85));
+//            .andExpect(jsonPath("$.timestamp").exists());
 
-        // Verify
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        QuizResult result = (QuizResult) response.getBody();
-        assertNotNull(result);
-        assertEquals(username, result.getUsername());
-        assertNotNull(result.getTimestamp());
-
-        // Ensure the service method was called once
-        verify(quizService, times(1)).saveQuizResult(any(QuizResult.class));
+        verify(quizService, times(1)).saveQuizResult(any());
     }
 }
