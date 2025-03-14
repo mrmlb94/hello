@@ -239,7 +239,7 @@ class WebControllerTest {
     }
 
     @Test
-    public void testWelcomePage_UserNotLoggedIn() {
+    void testWelcomePage_UserNotLoggedIn() {
         when(session.getAttribute("userId")).thenReturn(null);
         String view = webController.welcomePage(model, session);
         assertEquals("login", view);
