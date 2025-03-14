@@ -70,7 +70,6 @@ class QuizControllerTest {
         submission.setScore(85);
 
         QuizResult savedSubmission = new QuizResult("testUser", 85);
-//        savedSubmission.setTimestamp(new Date());
 
         when(quizService.saveQuizResult(any(QuizResult.class))).thenReturn(savedSubmission);
 
@@ -81,7 +80,6 @@ class QuizControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.username").value("testUser"))
             .andExpect(jsonPath("$.score").value(85));
-//            .andExpect(jsonPath("$.timestamp").exists());
 
         verify(quizService, times(1)).saveQuizResult(any());
     }
