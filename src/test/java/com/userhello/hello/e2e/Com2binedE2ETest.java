@@ -65,10 +65,9 @@ class Com2binedE2ETest {
         .when()
             .post("/login")
         .then()
-            .statusCode(anyOf(is(200), is(302))) // Accept 200 or 302 (if redirect occurs)
+            .statusCode(anyOf(is(200), is(302))) 
             .extract().asString();
 
-        // Since the login returns HTML with "Welcome", we simulate a token.
         if (response.contains("Welcome")) { 
             token = "dummy-token";
         } else {
