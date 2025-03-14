@@ -32,8 +32,7 @@ public class QuizController {
         if (username == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not logged in.");
         }
-        submission.setUsername(username); // Set the username from session
-        submission.setTimestamp(new Date()); // Explicitly set the current date and time
+        
         QuizResult result = quizService.saveQuizResult(submission);
         return ResponseEntity.ok(result);
     }
