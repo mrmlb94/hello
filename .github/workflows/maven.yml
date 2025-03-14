@@ -1,4 +1,4 @@
-name: Java CI with Maven and Docker
+name: Java CI with Maven and Docker Compose
 
 on:
   push:
@@ -9,6 +9,10 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      DB_URL: "jdbc:postgresql://localhost:5432/user_db"
+      DB_USERNAME: "postgres001"
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - name: Checkout code
@@ -20,22 +24,33 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      # Docker Compose Setup (Docker and Compose already available in ubuntu-latest)
-      - name: Build and start backend and PostgreSQL via Docker Compose
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # 🔴 CRITICAL STEP: MUST BE PRESENT!
+      - name: Build JAR file explicitly
+        run: mvn clean package -DskipTests
+
+      - name: Start backend and PostgreSQL explicitly via Docker Compose
         run: |
           docker compose up -d --build
-          sleep 30  # Increase if necessary, ensure backend is fully ready
+          sleep 30
 
-      - name: Check backend logs explicitly (troubleshooting)
-        run: docker-compose logs
+      - name: Show logs (troubleshooting)
+        run: docker compose logs
 
-      - name: Run Tests
+      - name: Run tests explicitly
         run: mvn clean verify
 
-      - name: Generate JaCoCo report
+      - name: Generate JaCoCo report explicitly
         run: mvn jacoco:report
 
-      - name: Upload coverage reports to Codecov
+      - name: Upload coverage reports to Codecov explicitly
         uses: codecov/codecov-action@v4.0.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
