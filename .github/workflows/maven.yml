@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: Java CI with Maven and Docker
 
 on:
   push:
@@ -9,49 +9,27 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    env:
-      DB_URL: "jdbc:postgresql://localhost:5432/user_db"
-      DB_USERNAME: "postgres001"
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
-    services:
-      postgres:
-        image: postgres:latest
-        ports:
-          - 5432:5432
-        env:
-          POSTGRES_DB: user_db
-          POSTGRES_USER: postgres001
-          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Cache Maven packages
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2/repository
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
-
-      - name: Build JAR with Maven
-        run: mvn clean package -DskipTests 
-
-      - name: Run Spring Boot Application
+      # Docker Compose Setup (Docker and Compose already available in ubuntu-latest)
+      - name: Build and start backend and PostgreSQL via Docker Compose
         run: |
-          mvn spring-boot:run > app.log 2>&1 &
-          sleep 30
-          cat app.log
+          docker-compose up -d --build
+          sleep 30  # Increase if necessary, ensure backend is fully ready
 
-      - name: Run Tests (All tests including E2E)
+      - name: Check backend logs explicitly (troubleshooting)
+        run: docker-compose logs
+
+      - name: Run Tests
         run: mvn clean verify
 
       - name: Generate JaCoCo report
