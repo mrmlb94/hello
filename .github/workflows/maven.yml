@@ -46,9 +46,6 @@ jobs:
       - name: Run Tests
         run: mvn clean verify -P skip-e2e-tests
 
-      - name: Generate JaCoCo report explicitly
-        run: mvn jacoco:report
-
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v4
         with:
