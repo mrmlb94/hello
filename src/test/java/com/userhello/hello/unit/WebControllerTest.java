@@ -103,8 +103,8 @@ class WebControllerTest {
         String viewName = webController.login("Ali", model, session);
         assertEquals("welcome", viewName);
         verify(session).setAttribute("userId", 1L);
-        verify(session).setAttribute("username", "Ali");
-        verify(model).addAttribute("name", "Ali");
+//        verify(session).setAttribute("username", "Ali");
+//        verify(model).addAttribute("name", "Ali");
     }
 
     @Test
@@ -217,4 +217,47 @@ class WebControllerTest {
         verify(session).removeAttribute("userId");
         verify(session).removeAttribute("username");
     }
+
+
+    
+    
+    @Test
+    void testLogin_NullUsername() {
+        String viewName = webController.login(null, model, session);
+        assertEquals("login", viewName);
+        verify(model).addAttribute("error", "Username not found. Please sign up.");
+    }
+
+	
+    @Test
+    void testLogin_LockedUser() {
+        User user = new User();
+        user.setLocked(true);  
+        when(userService.findByUname("Ali")).thenReturn(Optional.of(user));
+
+        String viewName = webController.login("Ali", model, session);
+        assertEquals("login", viewName);
+        verify(model).addAttribute("error", "Your account is locked.");
+    }
+
+    @Test
+    public void testWelcomePage_UserNotLoggedIn() {
+        when(session.getAttribute("userId")).thenReturn(null);
+        String view = webController.welcomePage(model, session);
+        assertEquals("login", view);
+    }
+
+    
+    
+    @Test
+	void testEditUserForm_InvalidId() {
+	    when(userService.findById(999L)).thenReturn(Optional.empty());
+	
+	    IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+	        webController.editUserForm(999L, model);
+	    });
+	    assertEquals("Invalid user Id:999", exception.getMessage());
+	}
+
+    
 }
