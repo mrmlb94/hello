@@ -330,26 +330,23 @@
         </plugins>
     </build>
 
-		<profiles>
-        <profile>
-            <id>skip-e2e-tests</id>
-            <properties>
-                <maven.test.skip>true</maven.test.skip>
-                <skipITs>true</skipITs>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
-                        <configuration>
-                            <skip>true</skip>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    	</profiles>
+	<profiles>
+	    <profile>
+	        <id>skip-e2e-tests</id>
+	        <build>
+	            <plugins>
+	                <plugin>
+	                    <groupId>org.apache.maven.plugins</groupId>
+	                    <artifactId>maven-failsafe-plugin</artifactId>
+	                    <configuration>
+	                        <skip>true</skip>
+	                    </configuration>
+	                </plugin>
+	            </plugins>
+	        </build>
+	    </profile>
+	</profiles>
+
 
 	
 </project>
