@@ -108,4 +108,5 @@ class QuizResultTest {
         // Assert
         assertEquals(timestamp2, quizResult.getTimestamp(), "Timestamp should be updated correctly");
     }
+
 }
