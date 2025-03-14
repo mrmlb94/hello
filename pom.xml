@@ -25,14 +25,14 @@
     </properties>
     
     
+    <repositories>
+        <repository>
+            <id>central</id>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </repository>
+    </repositories>
 
-	<repositories>
-    <repository>
-        <id>fabric8</id>
-        <url>https://repo.fabric8.io/</url>
-    </repository>
-	</repositories>
-	
+
     <dependencies>
         <!-- Spring Boot Dependencies -->
         <dependency>
@@ -50,12 +50,7 @@
 		    <artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency>
 
-		<dependency>
-		    <groupId>io.github.bonigarcia</groupId>
-		    <artifactId>webdrivermanager</artifactId>
-		    <version>5.8.0</version>
-		    <scope>test</scope>
-		</dependency>
+
 		
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
@@ -81,11 +76,21 @@
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
         
-		<dependency>
-		    <groupId>org.testcontainers</groupId>
-		    <artifactId>junit-jupiter</artifactId>
-		    <scope>test</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.0</version> <!--$NO-MVN-MAN-VER$-->
+            <scope>test</scope>
+        </dependency>
+
+        <!-- JUnit 4 compatibility with JUnit 5 -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.10.0</version><!--$NO-MVN-MAN-VER$-->
+            <scope>test</scope>
+        </dependency>
+
 
 		<dependency>
 		    <groupId>org.testcontainers</groupId>
@@ -125,8 +130,27 @@
             <scope>test</scope>
         </dependency>
         
-        
-        
+        <dependency>
+            <groupId>org.pitest</groupId>
+            <artifactId>pitest-junit5-plugin</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.19.4</version> <!--$NO-MVN-MAN-VER$-->
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>1.19.4</version> <!--$NO-MVN-MAN-VER$-->
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
 		    <groupId>io.rest-assured</groupId>
 		    <artifactId>rest-assured</artifactId>
@@ -146,15 +170,9 @@
 		    <scope>test</scope>
 		</dependency>
 
- 
-        
-        
-        
     </dependencies>
 
     <build>
-
-
         <plugins>
                 <!-- Plugin for Running Docker Automatically -->
 			<plugin>
@@ -244,61 +262,68 @@
                 </executions>
             </plugin>
 
-	        <plugin>
-	            <groupId>org.pitest</groupId>
-	            <artifactId>pitest-maven</artifactId>
-	            <version>1.14.4</version>
-	            <configuration>
-	                <targetClasses>
-	                    <param>com.userhello.hello.*</param>
-	                </targetClasses>
-	                <targetTests>
-	                    <param>com.userhello.hello.unit.*</param>
-	                    <param>com.userhello.hello.integration.*</param>
-	                </targetTests>
-	                <outputFormats>
-	                    <param>XML</param>
-	                    <param>HTML</param>
-	                </outputFormats>
-	            </configuration>
-	        </plugin>
 
-
-            <!-- Spring Boot Maven Plugin -->
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <groupId>org.pitest</groupId>
+                <artifactId>pitest-maven</artifactId>
+                <version>1.15.0</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-junit5-plugin</artifactId>
+                        <version>1.2.0</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <jvmArgs>
+                        <param>-Dspring.test.fork=false</param>
+                        <param>-Xmx4096m</param>
+                    </jvmArgs>
+                    <targetClasses>
+                        <param>com.userhello.hello.*</param>
+                    </targetClasses>
+                    <targetTests>
+                        <param>com.userhello.hello.*Test</param>
+                    </targetTests>
+                    <mutators>
+                        <mutator>STRONGER</mutator>
+                    </mutators>
+                    <outputFormats>
+                        <param>XML</param>
+                        <param>HTML</param>
+                    </outputFormats>
+                </configuration>
             </plugin>
 
             <!-- JaCoCo for Code Coverage -->
-	<plugin>
-	    <groupId>org.jacoco</groupId>
-	    <artifactId>jacoco-maven-plugin</artifactId>
-	    <version>0.8.12</version>
-	    <executions>
-		<execution>
-		    <id>prepare-agent</id>
-		    <phase>initialize</phase>
-		    <goals>
-			<goal>prepare-agent</goal>
-		    </goals>
-		</execution>
-		<execution>
-		    <id>report</id>
-		    <phase>verify</phase>
-		    <goals>
-			<goal>report</goal>
-		    </goals>
-		    <configuration>
-			<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
-			<excludes>
-			    <exclude>**/HelloApplication.class</exclude>
-			</excludes>
-		    </configuration>
-		</execution>
-	    </executions>
-	</plugin>
-
+			<plugin>
+			    <groupId>org.jacoco</groupId>
+			    <artifactId>jacoco-maven-plugin</artifactId>
+			    <version>0.8.12</version>
+			    <executions>
+			        <execution>
+			            <id>prepare-agent</id>
+			            <phase>initialize</phase>
+			            <goals>
+			                <goal>prepare-agent</goal> <!-- Sets up the agent to gather coverage data -->
+			            </goals>
+			        </execution>
+			        <execution>
+			            <id>report</id>
+			            <phase>verify</phase> <!-- Ensure report is generated after tests -->
+			            <goals>
+			                <goal>report</goal> <!-- Generates the report -->
+			            </goals>
+						<configuration>
+                            <excludes>
+                                <exclude>**/HelloApplication.main(String[])</exclude>
+                            </excludes>
+                        </configuration>
+			        </execution>
+			    </executions>
+			</plugin>
+            
+            
             
 	        <plugin>
 	            <groupId>org.apache.maven.plugins</groupId>
@@ -346,7 +371,4 @@
 	        </build>
 	    </profile>
 	</profiles>
-
-
-	
 </project>
