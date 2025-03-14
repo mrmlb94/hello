@@ -45,3 +45,4 @@ node_modules/
 
 ### Ignore Sensitive Data ###
 .env
+/target/

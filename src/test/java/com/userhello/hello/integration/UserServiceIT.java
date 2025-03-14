@@ -1,4 +1,4 @@
-package com.userhello.hello.integrationTest.java.com.userhello.hello.integration.integration;
+package com.userhello.hello.integration;
 
 import com.userhello.hello.model.User;
 import com.userhello.hello.service.UserService;

@@ -124,6 +124,32 @@
             <artifactId>selenium-java</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        
+        
+        <dependency>
+		    <groupId>io.rest-assured</groupId>
+		    <artifactId>rest-assured</artifactId>
+		    <version>5.4.0</version><!--$NO-MVN-MAN-VER$-->
+		    <scope>test</scope>
+		</dependency>
+        <dependency>
+		    <groupId>io.rest-assured</groupId>
+		    <artifactId>json-path</artifactId>
+		    <version>5.4.0</version><!--$NO-MVN-MAN-VER$-->
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>io.rest-assured</groupId>
+		    <artifactId>xml-path</artifactId>
+		    <version>5.4.0</version><!--$NO-MVN-MAN-VER$-->
+		    <scope>test</scope>
+		</dependency>
+
+ 
+        
+        
+        
     </dependencies>
 
     <build>
@@ -182,6 +208,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>3.1.2</version><!--$NO-MVN-MAN-VER$-->
                 <executions>
                     <execution>
                         <id>integration-tests</id>
@@ -196,15 +223,16 @@
                             </includes>
                         </configuration>
                     </execution>
-
+        	<!-- E2E Tests -->
                     <execution>
                         <id>e2e-tests</id>
-                        <phase>verify</phase>
+                        <phase>post-integration-test</phase> <!-- Run after IT tests -->
                         <goals>
                             <goal>integration-test</goal>
                             <goal>verify</goal>
                         </goals>
                         <configuration>
+                          <skipAfterFailure>true</skipAfterFailure>
                             <includes>
                                 <include>**/e2eTest/**/*.java</include>
 								<include>**/e2e/**/*.java</include>
