@@ -79,12 +79,11 @@ public class WebController {
         
         User user = userOptional.get();
         if (user.isLocked()) {
-            model.addAttribute("error", "Your account is locked.");
-            return "login";
+            model.addAttribute(ERROR_ATTR, "Your account is locked.");
+            return LOGIN_VIEW;
         }
         
         session.setAttribute(USER_ID_ATTR, user.getId());
-//        session.setAttribute("username", user.getUname());
         model.addAttribute("name", user.getName());
         return WELCOME_VIEW;
     }
