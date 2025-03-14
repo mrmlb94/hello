@@ -16,7 +16,17 @@ public class User {
     private String name;
     private String uname;
     private String familyName;
+    private boolean locked;
+    
+    public boolean isLocked() {
+        return locked;
+    }
 
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+    
+    
     @Temporal(TemporalType.DATE)
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthdate;
