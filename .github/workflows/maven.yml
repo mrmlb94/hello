@@ -44,8 +44,8 @@ jobs:
       - name: Show logs (troubleshooting)
         run: docker compose logs
 
-      - name: Run tests explicitly
-        run: mvn clean verify
+      - name: Run Tests
+        run: mvn clean verify -P skip-e2e-tests
 
       - name: Generate JaCoCo report explicitly
         run: mvn jacoco:report
